@@ -84,26 +84,24 @@ function checkUrlForCardParam() {
 function initTabs() {
   document.body.setAttribute("data-active-mode", "cards");
   const tabs = document.querySelectorAll(".mode-tab");
-  const btnOtherModes = document.getElementById("btn-other-modes");
-
-  if (btnOtherModes) {
-    btnOtherModes.addEventListener("click", () => {
-      const isShowing = document.body.classList.toggle("show-mode-switcher");
-      btnOtherModes.textContent = isShowing ? "✕ Close Menu" : "Other Modes ▾";
-    });
-  }
 
   tabs.forEach((btn) => {
     btn.addEventListener("click", () => {
       const mode = btn.dataset.mode;
       document.body.setAttribute("data-active-mode", mode);
-      document.body.classList.remove("show-mode-switcher");
-      if (btnOtherModes) btnOtherModes.textContent = "Other Modes ▾";
 
-      tabs.forEach((b) => b.classList.toggle("active", b === btn));
+      tabs.forEach((b) => {
+        const isActive = b === btn;
+        b.classList.toggle("active", isActive);
+        if (b.getAttribute("role") === "radio") {
+          b.setAttribute("aria-checked", isActive ? "true" : "false");
+        }
+      });
+
       document.querySelectorAll(".view-section").forEach((sec) => {
         sec.classList.toggle("active", sec.id === `view-${mode}`);
       });
+
       const playerPanel = document.getElementById("player-panel");
       const scannerPanel = document.getElementById("scanner-panel");
       if (mode === "rules") {

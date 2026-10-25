@@ -14,69 +14,38 @@
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 </head>
 <body>
-  <!-- Minimal Bar shown ONLY in Card Mode -->
-  <div id="card-mode-topbar" class="card-mode-topbar">
-    <span class="cm-brand">💿 Bollywood Hitster</span>
-    <button id="btn-other-modes" class="btn-other-modes" type="button">Other Modes ▾</button>
-  </div>
-  <!-- Top App Header -->
-  <header class="app-header">
-    <div class="brand">
-      <div class="brand-disc"><span>💿</span></div>
-      <div>
-        <h1>BOLLYWOOD HITSTER</h1>
-        <p class="subtitle">300 Verified Spotify Hits • 1950s–2020s</p>
-      </div>
-    </div>
-    <div class="header-actions">
-      <button id="btn-host-tips" class="icon-pill" title="Party Host Setup & DND Checklist">
-        <span>🔕</span> <span class="hide-xs">Host Setup</span>
+  <!-- Slim Single-Line Top Bar: Brand + 2-Way Radio Switch (Cards / No Cards) + Tiny Rules Link -->
+  <header class="slim-topbar">
+    <span class="slim-brand">💿 Hitster</span>
+
+    <div class="mode-radio-group" role="radiogroup" aria-label="Game Mode">
+      <button type="button" class="mode-radio active mode-tab" data-mode="cards" role="radio" aria-checked="true">
+        📷 Cards
       </button>
-      <a href="print.html" class="icon-pill" title="Printable Cards & Stickers">
-        <span>🖨️</span> <span class="hide-xs">Print Cards</span>
-      </a>
+      <button type="button" class="mode-radio mode-tab" data-mode="nocard" role="radio" aria-checked="false">
+        🎲 No-Card
+      </button>
     </div>
+
+    <button type="button" class="tiny-rules-link mode-tab" data-mode="rules">
+      Rules &amp; Score
+    </button>
   </header>
 
-  <!-- Dismissible Party Host Setup Banner (DND + Screen Wake Lock + Bluetooth) -->
+  <!-- Hidden elements kept for JS compatibility inside Rules view -->
   <div id="host-banner" class="host-banner hidden">
     <div class="host-banner-content">
       <div class="host-banner-title">
-        <span>📱 Party Phone Checklist (Before Handing Out Phone)</span>
+        <span>📱 Party Phone Checklist</span>
         <button id="btn-close-banner" class="banner-close" aria-label="Dismiss">✕</button>
       </div>
       <div class="host-steps">
-        <span class="step-badge">1. Turn on <strong>Do Not Disturb</strong> (hides notifications)</span>
+        <span class="step-badge">1. Turn on <strong>Do Not Disturb</strong></span>
         <span class="step-badge">2. Connect <strong>Bluetooth Speaker</strong></span>
         <span class="step-badge" id="wakelock-status">3. Screen Keep-Awake: <strong>Active</strong></span>
       </div>
     </div>
   </div>
-
-  <!-- Mode Navigation Tabs -->
-  <nav class="mode-tabs" role="tablist">
-    <button class="mode-tab active" data-mode="cards" role="tab">
-      <span class="tab-icon">📷</span>
-      <div>
-        <div class="tab-label">Physical Cards</div>
-        <div class="tab-sub">Scan QR or Type #</div>
-      </div>
-    </button>
-    <button class="mode-tab" data-mode="nocard" role="tab">
-      <span class="tab-icon">🎲</span>
-      <div>
-        <div class="tab-label">No-Card Mode</div>
-        <div class="tab-sub">Digital Deal &amp; Timeline</div>
-      </div>
-    </button>
-    <button class="mode-tab" data-mode="rules" role="tab">
-      <span class="tab-icon">🏆</span>
-      <div>
-        <div class="tab-label">Rules &amp; Score</div>
-        <div class="tab-sub">Year Window &amp; Teams</div>
-      </div>
-    </button>
-  </nav>
 
   <main class="app-main">
     <!-- ==================== MODE 1: PHYSICAL CARDS (ULTRA-SIMPLE KIOSK) ==================== -->
@@ -292,7 +261,11 @@
       <div class="glass-card scoreboard-card">
         <div class="section-head">
           <h2>🏆 Party Scoreboard</h2>
-          <button id="btn-reset-scores" class="btn-text">Reset Scores</button>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <button id="btn-host-tips" class="btn-text" type="button">🔕 Host Tips</button>
+            <a href="print.html" class="btn-text" style="text-decoration:none;">🖨️ Print PDFs</a>
+            <button id="btn-reset-scores" class="btn-text" type="button">Reset</button>
+          </div>
         </div>
         <div class="teams-grid">
           <div class="team-box">
