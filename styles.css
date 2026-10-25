@@ -1076,40 +1076,39 @@ body {
   font-weight: 800;
 }
 
-body[data-active-mode="cards"] .nocard-only-ui,
-body[data-active-mode="cards"] .mini-score-footer {
+.mini-score-footer {
   display: none !important;
 }
 
 .simple-kiosk-card {
   text-align: center;
-  padding: 28px 20px;
+  padding: 24px 18px;
 }
 
 .btn-jumbo {
   width: 100%;
-  min-height: 165px;
+  min-height: 55vh;
   flex-direction: column;
-  gap: 12px;
-  font-size: 1.55rem;
+  gap: 14px;
+  font-size: 1.65rem;
   font-weight: 900;
   letter-spacing: 0.04em;
-  border-radius: 22px;
+  border-radius: 24px;
   border: 2px solid var(--gold);
-  box-shadow: 0 12px 32px rgba(255, 42, 133, 0.45);
+  box-shadow: 0 14px 36px rgba(255, 42, 133, 0.45);
 }
 
 .jumbo-icon {
-  font-size: 3.2rem;
+  font-size: 3.8rem;
   line-height: 1;
 }
 
 .keypad-drawer-wrap {
-  margin-top: 16px;
+  margin-top: 14px;
 }
 
 .keypad-toggle-link {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: var(--text-muted);
   text-decoration: none;
   padding: 6px 14px;
@@ -1121,61 +1120,34 @@ body[data-active-mode="cards"] .mini-score-footer {
   margin-top: 12px;
 }
 
-.reveal-btn-wrap {
+.nocard-mini-footer {
   display: flex;
-  justify-content: center;
-  margin-top: 8px;
-}
-
-.btn-reveal-small {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 209, 102, 0.35);
-  color: var(--gold);
-  font-size: 0.82rem;
-  font-weight: 700;
-  padding: 7px 16px;
-  border-radius: 99px;
-  cursor: pointer;
-  transition: all 0.15s;
-}
-
-.btn-reveal-small:active {
-  transform: scale(0.97);
-  background: rgba(255, 209, 102, 0.16);
-}
-
-body[data-active-mode="cards"] .player-controls-row .btn-lg {
-  padding: 16px 12px;
-  font-size: 1rem;
-}
-
-/* ==================== HERO FULL-SCREEN PLAY/PAUSE STAGE ==================== */
-.mini-time-pill {
-  font-size: 0.76rem;
-  font-weight: 700;
-  color: var(--text-muted);
-  font-variant-numeric: tabular-nums;
-}
-
-.hero-play-stage {
-  display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+/* ==================== UNIFIED PLAY -> 50/50 SPLIT PLAYER ==================== */
+.play-next-split-row {
+  display: flex;
+  gap: 10px;
+  width: 100%;
   margin-top: 10px;
 }
 
 .btn-hero-play {
   width: 100%;
-  min-height: 54vh;
+  min-height: 56vh;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 14px;
-  border-radius: 26px;
+  gap: 12px;
+  border-radius: 24px;
   border: 2px solid rgba(255, 209, 102, 0.55);
   background: radial-gradient(circle at 50% 35%, #ff2a85 0%, #8a0f58 65%, #3c0938 100%);
   box-shadow: 0 16px 40px rgba(255, 42, 133, 0.45);
-  transition: min-height 0.22s ease, padding 0.22s ease;
+  transition: all 0.2s ease;
 }
 
 .btn-hero-play.is-playing {
@@ -1195,29 +1167,44 @@ body[data-active-mode="cards"] .player-controls-row .btn-lg {
   letter-spacing: 0.08em;
 }
 
-/* Once Reveal is pressed, shrink Play/Pause into a compact bar so the Answer Card & Next Card button fit comfortably */
-#player-panel.is-revealed .btn-hero-play {
-  min-height: 54px;
-  padding: 10px 20px;
-  flex-direction: row;
+/* After Reveal: Play/Pause becomes 50% width, and Next Card becomes the other 50% width! */
+#player-panel.is-revealed .play-next-split-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 10px;
-  border-radius: 14px;
+}
+
+#player-panel.is-revealed .btn-hero-play {
+  min-height: 58px;
+  padding: 12px 14px;
+  flex-direction: row;
+  gap: 8px;
+  border-radius: 16px;
 }
 
 #player-panel.is-revealed .hero-play-icon {
-  font-size: 1.3rem;
+  font-size: 1.25rem;
 }
 
 #player-panel.is-revealed .hero-play-label {
-  font-size: 1rem;
+  font-size: 1.02rem;
+}
+
+.btn-half-next {
+  min-height: 58px;
+  padding: 12px 14px;
+  font-size: 1.02rem;
+  font-weight: 900;
+  border-radius: 16px;
+  width: 100%;
 }
 
 .under-play-stack {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  margin-top: 12px;
+  gap: 8px;
+  margin-top: 10px;
   width: 100%;
 }
 
@@ -1237,6 +1224,19 @@ body[data-active-mode="cards"] .player-controls-row .btn-lg {
   color: #fff;
 }
 
-.next-card-after-reveal-wrap {
-  margin-top: 14px;
+.btn-reveal-small {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 209, 102, 0.4);
+  color: var(--gold);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 7px 20px;
+  border-radius: 99px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-reveal-small:active {
+  transform: scale(0.97);
+  background: rgba(255, 209, 102, 0.16);
 }

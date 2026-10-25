@@ -88,6 +88,7 @@ function initTabs() {
   tabs.forEach((btn) => {
     btn.addEventListener("click", () => {
       const mode = btn.dataset.mode;
+      const prevMode = document.body.getAttribute("data-active-mode");
       document.body.setAttribute("data-active-mode", mode);
 
       tabs.forEach((b) => {
@@ -104,17 +105,41 @@ function initTabs() {
 
       const playerPanel = document.getElementById("player-panel");
       const scannerPanel = document.getElementById("scanner-panel");
+      const nocardPanel = document.getElementById("nocard-panel");
+      const btnNext = document.getElementById("btn-next-scan");
+
       if (mode === "rules") {
         playerPanel.classList.add("hidden");
       } else if (mode === "cards") {
-        if (state.currentCard) {
+        stopCameraScanner();
+        if (prevMode !== "rules") {
+          // Switching to Cards mode: show the Scan Card screen ready to scan
+          audioEl.pause();
+          state.currentCard = null;
+          playerPanel.classList.add("hidden");
+          if (scannerPanel) scannerPanel.classList.remove("hidden");
+        } else if (state.currentCard) {
           playerPanel.classList.remove("hidden");
           if (scannerPanel) scannerPanel.classList.add("hidden");
         } else {
           if (scannerPanel) scannerPanel.classList.remove("hidden");
         }
-      } else if (state.currentCard) {
-        playerPanel.classList.remove("hidden");
+        if (btnNext) btnNext.innerHTML = "📷 Next Card";
+      } else if (mode === "nocard") {
+        stopCameraScanner();
+        if (prevMode !== "rules") {
+          // Switching to No-Card mode: show the Play Random Song screen ready to draw
+          audioEl.pause();
+          state.currentCard = null;
+          playerPanel.classList.add("hidden");
+          if (nocardPanel) nocardPanel.classList.remove("hidden");
+        } else if (state.currentCard) {
+          playerPanel.classList.remove("hidden");
+          if (nocardPanel) nocardPanel.classList.add("hidden");
+        } else {
+          if (nocardPanel) nocardPanel.classList.remove("hidden");
+        }
+        if (btnNext) btnNext.innerHTML = "🎲 Next Card";
       }
     });
   });
@@ -315,7 +340,6 @@ function initPlayerControls() {
   const btnReplay = document.getElementById("btn-replay");
   const btnNextScan = document.getElementById("btn-next-scan");
   const btnReveal = document.getElementById("btn-reveal-answer");
-  const btnToggleBlind = document.getElementById("btn-toggle-blind");
 
   btnPlayPause.addEventListener("click", () => {
     if (!state.currentCard) return;
@@ -334,8 +358,8 @@ function initPlayerControls() {
 
   btnNextScan.addEventListener("click", () => {
     audioEl.pause();
-    const activeTab = document.querySelector(".mode-tab.active")?.dataset.mode;
-    if (activeTab === "nocard") {
+    const activeMode = document.body.getAttribute("data-active-mode");
+    if (activeMode === "nocard") {
       drawRandomMysteryCard();
     } else {
       const scannerPanel = document.getElementById("scanner-panel");
@@ -349,21 +373,6 @@ function initPlayerControls() {
 
   btnReveal.addEventListener("click", () => {
     revealCurrentCardAnswer();
-  });
-
-  btnToggleBlind.addEventListener("click", () => {
-    state.blindMode = !state.blindMode;
-    btnToggleBlind.textContent = state.blindMode
-      ? "🙈 Blind Screen (Tap to Reveal)"
-      : "👁 Host View (Always Show Answer)";
-    if (!state.blindMode && state.currentCard) {
-      revealCurrentCardAnswer();
-    } else if (state.blindMode && state.currentCard) {
-      document.getElementById("answer-card-face").classList.add("hidden");
-      document.getElementById("btn-reveal-answer").classList.remove("hidden");
-      document.getElementById("btn-next-scan").classList.add("hidden");
-      document.getElementById("vinyl-center-text").textContent = "?";
-    }
   });
 
   // Audio events
@@ -384,27 +393,8 @@ function initPlayerControls() {
     const cur = audioEl.currentTime || 0;
     const dur = audioEl.duration || 30;
     const pct = Math.min(100, (cur / dur) * 100);
-    document.getElementById("audio-progress-fill").style.width = `${pct}%`;
-    document.getElementById("audio-time-current").textContent = formatSec(cur);
-    document.getElementById("audio-time-total").textContent = formatSec(dur);
-  });
-
-  // Quick Award buttons inside Answer Reveal
-  document.querySelectorAll(".btn-award").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const action = btn.dataset.award;
-      if (action === "team0-card") updateScore(0, "cards", 1);
-      if (action === "team0-token") updateScore(0, "tokens", 1);
-      if (action === "team1-card") updateScore(1, "cards", 1);
-      if (action === "team1-token") updateScore(1, "tokens", 1);
-      btn.textContent = "✅ Added!";
-      setTimeout(() => {
-        if (action === "team0-card") btn.textContent = "+1 Card Team A";
-        if (action === "team0-token") btn.textContent = "+1 Token Team A";
-        if (action === "team1-card") btn.textContent = "+1 Card Team B";
-        if (action === "team1-token") btn.textContent = "+1 Token Team B";
-      }, 900);
-    });
+    const fill = document.getElementById("audio-progress-fill");
+    if (fill) fill.style.width = `${pct}%`;
   });
 }
 
@@ -415,14 +405,16 @@ function loadAndPlayCard(card, autoPlay = true) {
   updateNoCardRemainingBadge();
 
   const panel = document.getElementById("player-panel");
-  panel.classList.remove("hidden");
-  const activeTab = document.querySelector(".mode-tab.active")?.dataset.mode;
-  if (activeTab === "cards") {
-    const scannerPanel = document.getElementById("scanner-panel");
-    if (scannerPanel) scannerPanel.classList.add("hidden");
-  }
+  panel.classList.remove("hidden", "is-revealed");
+
+  const scannerPanel = document.getElementById("scanner-panel");
+  const nocardPanel = document.getElementById("nocard-panel");
+  if (scannerPanel) scannerPanel.classList.add("hidden");
+  if (nocardPanel) nocardPanel.classList.add("hidden");
 
   document.getElementById("player-card-badge").textContent = `DECK ${card.deck} • #${String(card.card_num).padStart(3, "0")}`;
+  const fill = document.getElementById("audio-progress-fill");
+  if (fill) fill.style.width = "0%";
 
   // Populate answer card DOM
   document.getElementById("ans-card-id").textContent = card.card_label;
@@ -432,10 +424,10 @@ function loadAndPlayCard(card, autoPlay = true) {
 
   const movieEl = document.getElementById("ans-movie");
   if (card.is_no_film) {
-    movieEl.textContent = `🚫 NO FILM (Indipop) • 🎤 ARTIST: ${card.singers}`;
+    movieEl.textContent = `🚫 NO FILM (Indipop) • 🎤 ${card.singers}`;
     movieEl.classList.add("no-film-badge");
   } else {
-    movieEl.textContent = `🎬 FILM: ${card.movie}`;
+    movieEl.textContent = `🎬 ${card.movie}`;
     movieEl.classList.remove("no-film-badge");
   }
 
@@ -444,19 +436,12 @@ function loadAndPlayCard(card, autoPlay = true) {
   document.getElementById("ans-stars").textContent = card.stars;
   document.getElementById("ans-spotify-link").href = card.spotify_url;
 
-  if (state.blindMode) {
-    panel.classList.remove("is-revealed");
-    document.getElementById("answer-card-face").classList.add("hidden");
-    document.getElementById("btn-reveal-answer").classList.remove("hidden");
-    document.getElementById("btn-next-scan").classList.add("hidden");
-    const btnDraw = document.getElementById("btn-draw-random");
-    if (btnDraw) btnDraw.disabled = true;
-    document.getElementById("vinyl-center-text").textContent = "?";
-  } else {
-    revealCurrentCardAnswer();
-  }
+  // Before Reveal: hide Answer Card & Next Card button, show Reveal button
+  document.getElementById("answer-card-face").classList.add("hidden");
+  document.getElementById("btn-reveal-answer").classList.remove("hidden");
+  document.getElementById("btn-next-scan").classList.add("hidden");
 
-  // Load 30s verified Spotify preview stream
+  // Load verified Spotify preview stream
   audioEl.src = card.preview_url;
   audioEl.currentTime = 0;
   setSpoilerFreeMediaSession();
@@ -469,7 +454,7 @@ function loadAndPlayCard(card, autoPlay = true) {
     });
   }
 
-  panel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function revealCurrentCardAnswer() {
@@ -477,62 +462,50 @@ function revealCurrentCardAnswer() {
   document.getElementById("player-panel").classList.add("is-revealed");
   document.getElementById("btn-reveal-answer").classList.add("hidden");
   document.getElementById("answer-card-face").classList.remove("hidden");
+
   const btnNext = document.getElementById("btn-next-scan");
   if (btnNext) {
-    const activeTab = document.querySelector(".mode-tab.active")?.dataset.mode;
-    btnNext.innerHTML = activeTab === "nocard" ? "🎲 Draw Next Card" : "📷 Scan Next Card";
+    const activeMode = document.body.getAttribute("data-active-mode");
+    btnNext.innerHTML = activeMode === "nocard" ? "🎲 Next Card" : "📷 Next Card";
     btnNext.classList.remove("hidden");
   }
-  const btnDraw = document.getElementById("btn-draw-random");
-  if (btnDraw) btnDraw.disabled = false;
-  document.getElementById("vinyl-center-text").textContent = state.currentCard.year;
 }
 
 function setSpoilerFreeMediaSession() {
   if ("mediaSession" in navigator && state.currentCard) {
     navigator.mediaSession.metadata = new MediaMetadata({
-      title: `Mystery Track #${state.currentCard.card_id}`,
-      artist: "Bollywood Hitster — Name Film & Song!",
-      album: "Guess the Release Year Window"
+      title: `Card #${state.currentCard.card_id}`,
+      artist: "Bollywood Hitster",
+      album: ""
     });
   }
 }
 
-function formatSec(sec) {
-  const s = Math.max(0, Math.floor(sec));
-  const m = Math.floor(s / 60);
-  const rem = s % 60;
-  return `${m}:${String(rem).padStart(2, "0")}`;
-}
-
-// ==================== MODE 2: NO-CARD MODE & DIGITAL TIMELINE ====================
+// ==================== MODE 2: NO-CARD MODE ====================
 function initNoCardMode() {
   const select = document.getElementById("nocard-deck-select");
-  select.addEventListener("change", () => {
-    state.noCardPoolFilter = select.value;
-    updateNoCardRemainingBadge();
-  });
+  if (select) {
+    select.addEventListener("change", () => {
+      state.noCardPoolFilter = select.value;
+      updateNoCardRemainingBadge();
+    });
+  }
 
-  document.getElementById("btn-reset-nocard").addEventListener("click", () => {
-    state.playedIds.clear();
-    localStorage.setItem("bh_played_ids", "[]");
-    updateNoCardRemainingBadge();
-  });
+  const btnReset = document.getElementById("btn-reset-nocard");
+  if (btnReset) {
+    btnReset.addEventListener("click", () => {
+      state.playedIds.clear();
+      localStorage.setItem("bh_played_ids", "[]");
+      updateNoCardRemainingBadge();
+    });
+  }
 
-  document.getElementById("btn-draw-random").addEventListener("click", () => {
-    drawRandomMysteryCard();
-  });
-
-  document.getElementById("turn-team-0").addEventListener("click", () => setActiveTimelineTeam(0));
-  document.getElementById("turn-team-1").addEventListener("click", () => setActiveTimelineTeam(1));
-
-  document.getElementById("btn-deal-starters").addEventListener("click", () => {
-    dealStartingTimelineCards(true);
-  });
-
-  document.getElementById("btn-add-to-timeline").addEventListener("click", () => {
-    checkAndLockDigitalTimelinePlacement();
-  });
+  const btnDraw = document.getElementById("btn-draw-random");
+  if (btnDraw) {
+    btnDraw.addEventListener("click", () => {
+      drawRandomMysteryCard();
+    });
+  }
 }
 
 function getFilteredNoCardPool() {
@@ -546,7 +519,7 @@ function updateNoCardRemainingBadge() {
   const el = document.getElementById("nocard-remaining");
   if (!el || !state.catalog.length) return;
   const rem = getFilteredNoCardPool().length;
-  el.textContent = `${rem} unplayed`;
+  el.textContent = `${rem} left`;
 }
 
 function drawRandomMysteryCard() {
@@ -556,120 +529,11 @@ function drawRandomMysteryCard() {
     pool = getFilteredNoCardPool();
   }
   const pick = pool[Math.floor(Math.random() * pool.length)];
-  state.selectedSlotIndex = null;
-  document.getElementById("btn-add-to-timeline").disabled = true;
-  const fb = document.getElementById("timeline-feedback");
-  fb.classList.add("hidden");
-  renderDigitalTimeline();
   loadAndPlayCard(pick, true);
 }
 
-function setActiveTimelineTeam(teamIdx) {
-  state.activeTeam = teamIdx;
-  state.selectedSlotIndex = null;
-  document.getElementById("turn-team-0").classList.toggle("active", teamIdx === 0);
-  document.getElementById("turn-team-1").classList.toggle("active", teamIdx === 1);
-  document.getElementById("btn-add-to-timeline").disabled = true;
-  document.getElementById("timeline-feedback").classList.add("hidden");
-  renderDigitalTimeline();
-}
-
-function dealStartingTimelineCards(resetExisting = true) {
-  if (!state.catalog.length) return;
-  if (!resetExisting && state.timelines[0].length > 0) return;
-
-  // Pick 2 mid-era iconic starters (e.g. 1980s-1990s)
-  const midPool = state.catalog.filter((c) => c.year >= 1975 && c.year <= 2005);
-  const c0 = midPool[Math.floor(Math.random() * midPool.length)];
-  let c1 = midPool[Math.floor(Math.random() * midPool.length)];
-  if (c1.card_id === c0.card_id && midPool.length > 1) {
-    c1 = midPool[(midPool.indexOf(c0) + 7) % midPool.length];
-  }
-
-  state.timelines = [[c0], [c1]];
-  state.playedIds.add(c0.card_id);
-  state.playedIds.add(c1.card_id);
-  localStorage.setItem("bh_timelines", JSON.stringify(state.timelines));
-  localStorage.setItem("bh_played_ids", JSON.stringify([...state.playedIds]));
-
-  state.teams[0].cards = 1;
-  state.teams[1].cards = 1;
-  saveAndRenderScores();
-  renderDigitalTimeline();
-}
-
-function renderDigitalTimeline() {
-  const container = document.getElementById("digital-timeline-slots");
-  if (!container) return;
-  const tl = state.timelines[state.activeTeam] || [];
-  container.innerHTML = "";
-
-  for (let i = 0; i <= tl.length; i++) {
-    // Render slot button before card i (or at end)
-    const slotBtn = document.createElement("button");
-    slotBtn.className = "tl-slot-btn" + (state.selectedSlotIndex === i ? " selected" : "");
-    let label = "";
-    if (tl.length === 0) {
-      label = "Place Here";
-    } else if (i === 0) {
-      label = `≤ ${tl[0].year}`;
-    } else if (i === tl.length) {
-      label = `≥ ${tl[tl.length - 1].year}`;
-    } else {
-      label = `${tl[i - 1].year}–${tl[i].year}`;
-    }
-    slotBtn.innerHTML = `<div>📍 Slot ${i + 1}</div><div>${label}</div>`;
-    slotBtn.addEventListener("click", () => {
-      state.selectedSlotIndex = i;
-      document.getElementById("btn-add-to-timeline").disabled = !state.currentCard;
-      renderDigitalTimeline();
-    });
-    container.appendChild(slotBtn);
-
-    if (i < tl.length) {
-      const c = tl[i];
-      const node = document.createElement("div");
-      node.className = "tl-card-node";
-      node.innerHTML = `
-        <div class="tl-card-year">${c.year}</div>
-        <div class="tl-card-title" title="${c.title}">${c.title}</div>
-      `;
-      container.appendChild(node);
-    }
-  }
-}
-
-function checkAndLockDigitalTimelinePlacement() {
-  const card = state.currentCard;
-  const slot = state.selectedSlotIndex;
-  if (!card || slot === null) return;
-
-  const tl = state.timelines[state.activeTeam];
-  const minYear = slot === 0 ? -Infinity : tl[slot - 1].year;
-  const maxYear = slot === tl.length ? Infinity : tl[slot].year;
-
-  const isCorrect = card.year >= minYear && card.year <= maxYear;
-  const fb = document.getElementById("timeline-feedback");
-  fb.classList.remove("hidden", "correct", "wrong");
-
-  revealCurrentCardAnswer();
-
-  if (isCorrect) {
-    tl.splice(slot, 0, card);
-    localStorage.setItem("bh_timelines", JSON.stringify(state.timelines));
-    state.teams[state.activeTeam].cards = tl.length;
-    saveAndRenderScores();
-    fb.classList.add("correct");
-    fb.innerHTML = `✅ <strong>CORRECT WINDOW!</strong> "${card.title}" (${card.is_no_film ? "NO FILM — " + card.singers : card.movie}) is from <strong>${card.year}</strong>! Added to ${state.teams[state.activeTeam].name}'s timeline (${tl.length}/10)!`;
-  } else {
-    fb.classList.add("wrong");
-    fb.innerHTML = `❌ <strong>MISSED WINDOW!</strong> You placed it in <strong>${minYear === -Infinity ? "Start" : minYear}–${maxYear === Infinity ? "Now" : maxYear}</strong>, but "${card.title}" (${card.is_no_film ? "NO FILM — " + card.singers : card.movie}) was released in <strong>${card.year}</strong>!`;
-  }
-
-  state.selectedSlotIndex = null;
-  document.getElementById("btn-add-to-timeline").disabled = true;
-  renderDigitalTimeline();
-}
+function dealStartingTimelineCards() {}
+function renderDigitalTimeline() {}
 
 // ==================== SCOREBOARD ====================
 function initScoreboard() {

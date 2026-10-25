@@ -48,7 +48,7 @@
   </div>
 
   <main class="app-main">
-    <!-- ==================== MODE 1: PHYSICAL CARDS (ULTRA-SIMPLE KIOSK) ==================== -->
+    <!-- ==================== MODE 1: PHYSICAL CARDS (SCANNER) ==================== -->
     <section id="view-cards" class="view-section active">
       <div class="glass-card scanner-card simple-kiosk-card" id="scanner-panel">
         <!-- Camera Viewport -->
@@ -111,149 +111,79 @@
       </div>
     </section>
 
-    <!-- ==================== MODE 2: NO-CARD MODE (DIGITAL DECK & TIMELINE) ==================== -->
+    <!-- ==================== MODE 2: NO-CARD MODE (DRAW MYSTERY SONG) ==================== -->
     <section id="view-nocard" class="view-section">
-      <div class="glass-card nocard-card">
-        <div class="section-head">
-          <div>
-            <h2>🎲 No-Card Mode (Spontaneous Play)</h2>
-            <p class="muted">Play right now without physical cards — draw mystery Bollywood hits or run a full digital timeline!</p>
-          </div>
-        </div>
-
-        <!-- Sub-mode selector -->
-        <div class="submode-bar">
-          <div class="filter-group">
-            <label for="nocard-deck-select">Deck Pool:</label>
-            <select id="nocard-deck-select" class="select-pill">
-              <option value="ALL">All 300 Songs (Decks A + B)</option>
-              <option value="A">Deck A Only (150 Songs)</option>
-              <option value="B">Deck B Only (150 Songs)</option>
-            </select>
-          </div>
-          <div class="filter-group">
-            <span id="nocard-remaining" class="badge-pill">300 unplayed</span>
-            <button id="btn-reset-nocard" class="btn-text">Reset Pool</button>
-          </div>
-        </div>
-
-        <div class="nocard-cta-row">
-          <button id="btn-draw-random" class="btn btn-primary btn-xl">
-            <span class="btn-icon">🎲</span> Draw Mystery Song &amp; Play Sample
+      <div class="glass-card simple-kiosk-card" id="nocard-panel">
+        <div class="scanner-controls">
+          <button id="btn-draw-random" class="btn btn-primary btn-jumbo" type="button">
+            <span class="jumbo-icon">🎲</span>
+            <span>PLAY RANDOM SONG</span>
           </button>
         </div>
 
-        <!-- Digital Timeline Builder for Teams -->
-        <div class="digital-timeline-box">
-          <div class="timeline-header">
-            <div>
-              <h3>📊 Interactive Team Timelines (Optional)</h3>
-              <p class="muted-sm">Tap a slot in the active team's timeline to place the current mystery card &amp; check the Year Window automatically!</p>
-            </div>
-            <div class="team-turn-switch">
-              <button class="turn-btn active" data-team="0" id="turn-team-0">Team A's Turn</button>
-              <button class="turn-btn" data-team="1" id="turn-team-1">Team B's Turn</button>
-            </div>
-          </div>
-
-          <div id="digital-timeline-slots" class="timeline-slots-container">
-            <!-- Populated dynamically by app.js -->
-          </div>
-
-          <div class="timeline-actions">
-            <button id="btn-deal-starters" class="btn btn-secondary btn-sm">🃏 Deal Starting Timeline Cards</button>
-            <button id="btn-add-to-timeline" class="btn btn-accent btn-sm" disabled>✅ Lock In &amp; Check Placement</button>
-          </div>
-          <div id="timeline-feedback" class="timeline-feedback hidden"></div>
+        <div class="nocard-mini-footer">
+          <select id="nocard-deck-select" class="select-pill">
+            <option value="ALL">All 300 Songs</option>
+            <option value="A">Deck A (150)</option>
+            <option value="B">Deck B (150)</option>
+          </select>
+          <span id="nocard-remaining" class="badge-pill">300 left</span>
+          <button id="btn-reset-nocard" class="btn-text" type="button">Reset</button>
         </div>
       </div>
     </section>
 
-    <!-- ==================== ACTIVE SONG PLAYER PANEL (SHARED BY PHYSICAL & NO-CARD MODES) ==================== -->
+    <!-- ==================== SHARED ULTRA-SIMPLE SONG PLAYER (CARDS & NO-CARD) ==================== -->
     <section id="player-panel" class="glass-card player-card hidden">
       <div class="player-top-bar">
         <div class="card-id-pill" id="player-card-badge">DECK A • #001</div>
-        <div class="mini-time-pill">
-          <span id="audio-time-current">0:00</span> / <span id="audio-time-total">0:30</span>
-        </div>
-        <div class="view-mode-switch nocard-only-ui">
-          <button id="btn-toggle-blind" class="pill-toggle" title="Toggle whether song info is hidden or visible by default">
-            🙈 Blind Screen
-          </button>
-        </div>
       </div>
 
-      <!-- Thin progress bar + hidden vinyl hooks for JS compatibility -->
+      <!-- Clean Progress Bar -->
       <div class="progress-bar-wrap">
         <div class="progress-bar-fill" id="audio-progress-fill"></div>
       </div>
-      <div class="hidden">
-        <div id="vinyl-disc"><span id="vinyl-center-text">?</span></div>
-        <div id="player-status-text"></div>
-      </div>
 
-      <!-- Giant Full-Screen Play/Pause Button (shrinks after Reveal) -->
-      <div class="hero-play-stage">
+      <!-- Row that is 100% Giant Play/Pause before Reveal, and 50% Play/Pause + 50% Next Card after Reveal -->
+      <div class="play-next-split-row" id="play-next-row">
         <button id="btn-play-pause" class="btn btn-primary btn-hero-play" type="button">
-          <span class="hero-play-icon" id="hero-play-icon">⏸</span>
-          <span class="hero-play-label" id="hero-play-label">PAUSE</span>
+          <span class="hero-play-icon">⏸</span>
+          <span class="hero-play-label">PAUSE</span>
         </button>
-
-        <!-- Stacked tiny Replay Sample + small Reveal Card underneath -->
-        <div class="under-play-stack">
-          <button id="btn-replay" class="btn-tiny-replay" type="button">
-            🔄 Replay Sample
-          </button>
-          <button id="btn-reveal-answer" class="btn-reveal-small" type="button">
-            👁 Reveal Card
-          </button>
-        </div>
+        <button id="btn-next-scan" class="btn btn-accent btn-half-next hidden" type="button">
+          📷 Next Card
+        </button>
       </div>
 
-      <!-- Qualification Rule Reminder (No-Card Mode only) -->
-      <div class="qualify-rule-banner nocard-only-ui">
-        <strong>🎯 To Qualify for the Year Window:</strong><br/>
-        • <strong>Film Song:</strong> Name <strong>Film + Song Title</strong> (Artist not required)<br/>
-        • <strong>No-Film Song:</strong> Say <strong>"No Film" + Artist + Song Title</strong>
+      <!-- Little Replay + Small Reveal underneath -->
+      <div class="under-play-stack">
+        <button id="btn-replay" class="btn-tiny-replay" type="button">
+          🔄 Replay
+        </button>
+        <button id="btn-reveal-answer" class="btn-reveal-small" type="button">
+          👁 Reveal
+        </button>
       </div>
 
-      <!-- Reveal / Answer Card (Shown only after tapping Reveal Card) -->
-      <div class="answer-reveal-zone">
-
-        <div id="answer-card-face" class="physical-card-preview hidden">
-          <div class="pcard-inner" id="pcard-inner">
-            <div class="pcard-top-row">
-              <span class="pcard-id" id="ans-card-id">A-001</span>
-              <span class="pcard-decade" id="ans-decade">1990s</span>
-            </div>
-            <div class="pcard-year" id="ans-year">1998</div>
-            <div class="pcard-title" id="ans-title">Chaiyya Chaiyya</div>
-            <div class="pcard-movie" id="ans-movie">🎬 Dil Se..</div>
-            <div class="pcard-meta">
-              <div><strong>🎤 Singers:</strong> <span id="ans-singers">Sukhwinder Singh, Sapna Awasthi</span></div>
-              <div><strong>🎼 Music:</strong> <span id="ans-music">A.R. Rahman</span></div>
-              <div><strong>⭐ Stars:</strong> <span id="ans-stars">Shah Rukh Khan, Malaika Arora</span></div>
-            </div>
-            <div class="pcard-links">
-              <a id="ans-spotify-link" href="#" target="_blank" rel="noopener" class="spotify-mini-link">
-                Open Full Track in Spotify ↗
-              </a>
-            </div>
+      <!-- Revealed Card Details (Shown after pressing Reveal) -->
+      <div id="answer-card-face" class="physical-card-preview hidden">
+        <div class="pcard-inner" id="pcard-inner">
+          <div class="pcard-top-row">
+            <span class="pcard-id" id="ans-card-id">A-001</span>
+            <span class="pcard-decade" id="ans-decade">1990s</span>
           </div>
-
-          <div class="next-card-after-reveal-wrap">
-            <button id="btn-next-scan" class="btn btn-accent btn-xl hidden" type="button">
-              📷 Scan Next Card
-            </button>
+          <div class="pcard-year" id="ans-year">1998</div>
+          <div class="pcard-title" id="ans-title">Chaiyya Chaiyya</div>
+          <div class="pcard-movie" id="ans-movie">🎬 Dil Se..</div>
+          <div class="pcard-meta">
+            <div><strong>🎤 Singers:</strong> <span id="ans-singers">Sukhwinder Singh, Sapna Awasthi</span></div>
+            <div><strong>🎼 Music:</strong> <span id="ans-music">A.R. Rahman</span></div>
+            <div><strong>⭐ Stars:</strong> <span id="ans-stars">Shah Rukh Khan, Malaika Arora</span></div>
           </div>
-
-          <!-- Quick Score Award Buttons after Reveal -->
-          <div class="quick-award-bar nocard-only-ui">
-            <span class="award-label">Award Turn:</span>
-            <button class="btn-award" data-award="team0-card">+1 Card Team A</button>
-            <button class="btn-award" data-award="team0-token">+1 Token Team A</button>
-            <button class="btn-award" data-award="team1-card">+1 Card Team B</button>
-            <button class="btn-award" data-award="team1-token">+1 Token Team B</button>
+          <div class="pcard-links">
+            <a id="ans-spotify-link" href="#" target="_blank" rel="noopener" class="spotify-mini-link">
+              Open in Spotify ↗
+            </a>
           </div>
         </div>
       </div>
@@ -326,7 +256,7 @@
             <strong>Setup:</strong> Split into two teams (or more). Deal each team <strong>1 face-up starting card</strong> to begin their timeline, plus <strong>2 Hitster Tokens 🪙</strong>.
           </li>
           <li>
-            <strong>Opposing Team Scans &amp; Passes the Card:</strong> On Team A's turn, <strong>Team B</strong> draws a card, scans the QR code on the iPhone, and can quietly pass the data side of the card around their own team while the 30-second Bollywood hook plays over Bluetooth!
+            <strong>Opposing Team Scans &amp; Passes the Card:</strong> On Team A's turn, <strong>Team B</strong> draws a card, scans the QR code on the iPhone, and can quietly pass the data side of the card around their own team while the Bollywood hook plays over Bluetooth!
           </li>
           <li>
             <strong>Step 1 — Qualify (Film + Song, or "No Film" + Artist + Song):</strong>
@@ -361,7 +291,7 @@
         <div class="section-head">
           <div>
             <h2>🔍 Song Catalog Inspector (300 Verified Tracks)</h2>
-            <p class="muted">Every card is verified against Spotify's official track ID &amp; 30s audio preview</p>
+            <p class="muted">Every card is verified against Spotify's official track ID &amp; audio preview</p>
           </div>
           <button id="btn-toggle-catalog" class="btn btn-secondary btn-sm">Show Catalog</button>
         </div>
@@ -385,7 +315,6 @@
       </div>
     </section>
   </main>
-
   <!-- Sticky Mini Score Footer -->
   <footer class="mini-score-footer">
     <div class="mini-team" id="footer-team0">
