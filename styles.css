@@ -562,10 +562,13 @@ body {
 }
 
 .player-controls-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
   gap: 8px;
   margin-bottom: 14px;
+}
+
+.player-controls-row .btn {
+  flex: 1;
 }
 
 /* Qualification Reminder Banner inside Player */
@@ -1144,4 +1147,96 @@ body[data-active-mode="cards"] .mini-score-footer {
 body[data-active-mode="cards"] .player-controls-row .btn-lg {
   padding: 16px 12px;
   font-size: 1rem;
+}
+
+/* ==================== HERO FULL-SCREEN PLAY/PAUSE STAGE ==================== */
+.mini-time-pill {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.hero-play-stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.btn-hero-play {
+  width: 100%;
+  min-height: 54vh;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+  border-radius: 26px;
+  border: 2px solid rgba(255, 209, 102, 0.55);
+  background: radial-gradient(circle at 50% 35%, #ff2a85 0%, #8a0f58 65%, #3c0938 100%);
+  box-shadow: 0 16px 40px rgba(255, 42, 133, 0.45);
+  transition: min-height 0.22s ease, padding 0.22s ease;
+}
+
+.btn-hero-play.is-playing {
+  background: radial-gradient(circle at 50% 35%, #06d6a0 0%, #058c68 65%, #073b3a 100%);
+  border-color: rgba(0, 245, 212, 0.7);
+  box-shadow: 0 16px 40px rgba(6, 214, 160, 0.35);
+}
+
+.hero-play-icon {
+  font-size: 4.8rem;
+  line-height: 1;
+}
+
+.hero-play-label {
+  font-size: 1.85rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+/* Once Reveal is pressed, shrink Play/Pause into a compact bar so the Answer Card & Next Card button fit comfortably */
+#player-panel.is-revealed .btn-hero-play {
+  min-height: 54px;
+  padding: 10px 20px;
+  flex-direction: row;
+  gap: 10px;
+  border-radius: 14px;
+}
+
+#player-panel.is-revealed .hero-play-icon {
+  font-size: 1.3rem;
+}
+
+#player-panel.is-revealed .hero-play-label {
+  font-size: 1rem;
+}
+
+.under-play-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  width: 100%;
+}
+
+.btn-tiny-replay {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.btn-tiny-replay:active {
+  color: #fff;
+}
+
+.next-card-after-reveal-wrap {
+  margin-top: 14px;
 }

@@ -361,6 +361,7 @@ function initPlayerControls() {
     } else if (state.blindMode && state.currentCard) {
       document.getElementById("answer-card-face").classList.add("hidden");
       document.getElementById("btn-reveal-answer").classList.remove("hidden");
+      document.getElementById("btn-next-scan").classList.add("hidden");
       document.getElementById("vinyl-center-text").textContent = "?";
     }
   });
@@ -368,23 +369,15 @@ function initPlayerControls() {
   // Audio events
   audioEl.addEventListener("play", () => {
     state.isPlaying = true;
-    btnPlayPause.innerHTML = "⏸ Pause";
-    document.getElementById("vinyl-disc").classList.add("spinning");
-    document.getElementById("player-status-text").textContent =
-      "Playing 30s Spotify Representative Sample...";
+    btnPlayPause.innerHTML = '<span class="hero-play-icon">⏸</span><span class="hero-play-label">PAUSE</span>';
+    btnPlayPause.classList.add("is-playing");
     setSpoilerFreeMediaSession();
   });
 
   audioEl.addEventListener("pause", () => {
     state.isPlaying = false;
-    btnPlayPause.innerHTML = "▶ Play";
-    document.getElementById("vinyl-disc").classList.remove("spinning");
-    if (audioEl.currentTime >= audioEl.duration - 0.5) {
-      document.getElementById("player-status-text").textContent =
-        "30s Sample Finished — Tap Replay to Hear Again!";
-    } else {
-      document.getElementById("player-status-text").textContent = "Paused";
-    }
+    btnPlayPause.innerHTML = '<span class="hero-play-icon">▶</span><span class="hero-play-label">PLAY</span>';
+    btnPlayPause.classList.remove("is-playing");
   });
 
   audioEl.addEventListener("timeupdate", () => {
@@ -452,8 +445,12 @@ function loadAndPlayCard(card, autoPlay = true) {
   document.getElementById("ans-spotify-link").href = card.spotify_url;
 
   if (state.blindMode) {
+    panel.classList.remove("is-revealed");
     document.getElementById("answer-card-face").classList.add("hidden");
     document.getElementById("btn-reveal-answer").classList.remove("hidden");
+    document.getElementById("btn-next-scan").classList.add("hidden");
+    const btnDraw = document.getElementById("btn-draw-random");
+    if (btnDraw) btnDraw.disabled = true;
     document.getElementById("vinyl-center-text").textContent = "?";
   } else {
     revealCurrentCardAnswer();
@@ -466,9 +463,9 @@ function loadAndPlayCard(card, autoPlay = true) {
 
   if (autoPlay) {
     audioEl.play().catch(() => {
-      document.getElementById("player-status-text").textContent =
-        "Ready — Tap ▶ Play to Start Audio!";
-      document.getElementById("btn-play-pause").innerHTML = "▶ Play";
+      const btnPP = document.getElementById("btn-play-pause");
+      btnPP.innerHTML = '<span class="hero-play-icon">▶</span><span class="hero-play-label">PLAY</span>';
+      btnPP.classList.remove("is-playing");
     });
   }
 
@@ -477,8 +474,17 @@ function loadAndPlayCard(card, autoPlay = true) {
 
 function revealCurrentCardAnswer() {
   if (!state.currentCard) return;
+  document.getElementById("player-panel").classList.add("is-revealed");
   document.getElementById("btn-reveal-answer").classList.add("hidden");
   document.getElementById("answer-card-face").classList.remove("hidden");
+  const btnNext = document.getElementById("btn-next-scan");
+  if (btnNext) {
+    const activeTab = document.querySelector(".mode-tab.active")?.dataset.mode;
+    btnNext.innerHTML = activeTab === "nocard" ? "🎲 Draw Next Card" : "📷 Scan Next Card";
+    btnNext.classList.remove("hidden");
+  }
+  const btnDraw = document.getElementById("btn-draw-random");
+  if (btnDraw) btnDraw.disabled = false;
   document.getElementById("vinyl-center-text").textContent = state.currentCard.year;
 }
 

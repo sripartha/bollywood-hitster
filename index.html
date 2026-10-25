@@ -173,6 +173,9 @@
     <section id="player-panel" class="glass-card player-card hidden">
       <div class="player-top-bar">
         <div class="card-id-pill" id="player-card-badge">DECK A • #001</div>
+        <div class="mini-time-pill">
+          <span id="audio-time-current">0:00</span> / <span id="audio-time-total">0:30</span>
+        </div>
         <div class="view-mode-switch nocard-only-ui">
           <button id="btn-toggle-blind" class="pill-toggle" title="Toggle whether song info is hidden or visible by default">
             🙈 Blind Screen
@@ -180,47 +183,42 @@
         </div>
       </div>
 
-      <!-- Spinning Bollywood Vinyl & Progress Ring -->
-      <div class="vinyl-stage">
-        <div class="vinyl-disc" id="vinyl-disc">
-          <div class="vinyl-grooves"></div>
-          <div class="vinyl-center" id="vinyl-center-label">
-            <span id="vinyl-center-text">?</span>
-          </div>
-        </div>
-        <div class="player-status-box">
-          <div class="status-label" id="player-status-text">Playing 30s Spotify Representative Sample...</div>
-          <div class="progress-bar-wrap">
-            <div class="progress-bar-fill" id="audio-progress-fill"></div>
-          </div>
-          <div class="time-row">
-            <span id="audio-time-current">0:00</span>
-            <span class="sample-tag">🎵 Official Spotify 30s Hook Sampler</span>
-            <span id="audio-time-total">0:30</span>
-          </div>
+      <!-- Thin progress bar + hidden vinyl hooks for JS compatibility -->
+      <div class="progress-bar-wrap">
+        <div class="progress-bar-fill" id="audio-progress-fill"></div>
+      </div>
+      <div class="hidden">
+        <div id="vinyl-disc"><span id="vinyl-center-text">?</span></div>
+        <div id="player-status-text"></div>
+      </div>
+
+      <!-- Giant Full-Screen Play/Pause Button (shrinks after Reveal) -->
+      <div class="hero-play-stage">
+        <button id="btn-play-pause" class="btn btn-primary btn-hero-play" type="button">
+          <span class="hero-play-icon" id="hero-play-icon">⏸</span>
+          <span class="hero-play-label" id="hero-play-label">PAUSE</span>
+        </button>
+
+        <!-- Stacked tiny Replay Sample + small Reveal Card underneath -->
+        <div class="under-play-stack">
+          <button id="btn-replay" class="btn-tiny-replay" type="button">
+            🔄 Replay Sample
+          </button>
+          <button id="btn-reveal-answer" class="btn-reveal-small" type="button">
+            👁 Reveal Card
+          </button>
         </div>
       </div>
 
-      <!-- Primary Audio Controls -->
-      <div class="player-controls-row">
-        <button id="btn-play-pause" class="btn btn-primary btn-lg">⏸ Pause</button>
-        <button id="btn-replay" class="btn btn-secondary btn-lg">🔄 Replay Sample</button>
-        <button id="btn-next-scan" class="btn btn-accent btn-lg">📷 Next Card</button>
-      </div>
-
-      <!-- Qualification Rule Reminder -->
+      <!-- Qualification Rule Reminder (No-Card Mode only) -->
       <div class="qualify-rule-banner nocard-only-ui">
         <strong>🎯 To Qualify for the Year Window:</strong><br/>
         • <strong>Film Song:</strong> Name <strong>Film + Song Title</strong> (Artist not required)<br/>
         • <strong>No-Film Song:</strong> Say <strong>"No Film" + Artist + Song Title</strong>
       </div>
-      <!-- Reveal / Answer Card (Hidden in Blind Mode until tapped, or visible in Host View) -->
+
+      <!-- Reveal / Answer Card (Shown only after tapping Reveal Card) -->
       <div class="answer-reveal-zone">
-        <div class="reveal-btn-wrap">
-          <button id="btn-reveal-answer" class="btn-reveal-small" type="button">
-            👁 Reveal Card
-          </button>
-        </div>
 
         <div id="answer-card-face" class="physical-card-preview hidden">
           <div class="pcard-inner" id="pcard-inner">
@@ -241,6 +239,12 @@
                 Open Full Track in Spotify ↗
               </a>
             </div>
+          </div>
+
+          <div class="next-card-after-reveal-wrap">
+            <button id="btn-next-scan" class="btn btn-accent btn-xl hidden" type="button">
+              📷 Scan Next Card
+            </button>
           </div>
 
           <!-- Quick Score Award Buttons after Reveal -->
