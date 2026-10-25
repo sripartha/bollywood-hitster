@@ -14,6 +14,11 @@
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
 </head>
 <body>
+  <!-- Minimal Bar shown ONLY in Card Mode -->
+  <div id="card-mode-topbar" class="card-mode-topbar">
+    <span class="cm-brand">💿 Bollywood Hitster</span>
+    <button id="btn-other-modes" class="btn-other-modes" type="button">Other Modes ▾</button>
+  </div>
   <!-- Top App Header -->
   <header class="app-header">
     <div class="brand">
@@ -242,10 +247,11 @@
       </div>
       <!-- Reveal / Answer Card (Hidden in Blind Mode until tapped, or visible in Host View) -->
       <div class="answer-reveal-zone">
-        <button id="btn-reveal-answer" class="btn-reveal-card">
-          <span>👁 Tap to Reveal Card Answer (Year, Movie, Song &amp; Singers)</span>
-          <small>Physical card players can also pass around the back of the card!</small>
-        </button>
+        <div class="reveal-btn-wrap">
+          <button id="btn-reveal-answer" class="btn-reveal-small" type="button">
+            👁 Reveal Card
+          </button>
+        </div>
 
         <div id="answer-card-face" class="physical-card-preview hidden">
           <div class="pcard-inner" id="pcard-inner">

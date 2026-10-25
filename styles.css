@@ -1008,6 +1008,48 @@ body {
 }
 
 /* ==================== ULTRA-SIMPLE CARD MODE KIOSK ==================== */
+.card-mode-topbar {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+.cm-brand {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.03em;
+}
+
+.btn-other-modes {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid var(--border-glass);
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 99px;
+  cursor: pointer;
+}
+
+/* When in Physical Card Mode, hide the big header, mode tabs, and footer */
+body[data-active-mode="cards"] .card-mode-topbar {
+  display: flex;
+}
+
+body[data-active-mode="cards"]:not(.show-mode-switcher) .app-header,
+body[data-active-mode="cards"]:not(.show-mode-switcher) .mode-tabs {
+  display: none !important;
+}
+
+body[data-active-mode="cards"] .nocard-only-ui,
+body[data-active-mode="cards"] .mini-score-footer {
+  display: none !important;
+}
+
 .simple-kiosk-card {
   text-align: center;
   padding: 28px 20px;
@@ -1015,10 +1057,10 @@ body {
 
 .btn-jumbo {
   width: 100%;
-  min-height: 150px;
+  min-height: 165px;
   flex-direction: column;
   gap: 12px;
-  font-size: 1.5rem;
+  font-size: 1.55rem;
   font-weight: 900;
   letter-spacing: 0.04em;
   border-radius: 22px;
@@ -1027,7 +1069,7 @@ body {
 }
 
 .jumbo-icon {
-  font-size: 3rem;
+  font-size: 3.2rem;
   line-height: 1;
 }
 
@@ -1048,14 +1090,30 @@ body {
   margin-top: 12px;
 }
 
-/* In Physical Card Mode (data-active-mode="cards"), hide extra UI clutter since players hold the physical cards */
-body[data-active-mode="cards"] .nocard-only-ui,
-body[data-active-mode="cards"] .answer-reveal-zone,
-body[data-active-mode="cards"] .mini-score-footer {
-  display: none !important;
+.reveal-btn-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 6px;
+}
+
+.btn-reveal-small {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 209, 102, 0.35);
+  color: var(--gold);
+  font-size: 0.84rem;
+  font-weight: 700;
+  padding: 8px 18px;
+  border-radius: 99px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.btn-reveal-small:active {
+  transform: scale(0.97);
+  background: rgba(255, 209, 102, 0.16);
 }
 
 body[data-active-mode="cards"] .player-controls-row .btn-lg {
-  padding: 18px 14px;
-  font-size: 1.05rem;
+  padding: 16px 12px;
+  font-size: 1rem;
 }
