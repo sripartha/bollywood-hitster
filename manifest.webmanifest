@@ -1,0 +1,10 @@
+{
+  "name": "Bollywood Hitster — Party Edition",
+  "short_name": "Filmi Hitster",
+  "description": "300 Verified Bollywood Spotify Hits (1950s–2020s) — QR Card Scanner & No-Card Party Game",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0d0814",
+  "theme_color": "#0d0814",
+  "orientation": "portrait"
+}

@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Filmi Hitster" />
+  <meta name="theme-color" content="#0d0814" />
+  <title>Bollywood Hitster — Party Edition</title>
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="styles.css" />
+  <!-- jsQR for universal iOS Safari camera QR scanning -->
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+</head>
+<body>
+  <!-- Top App Header -->
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-disc"><span>💿</span></div>
+      <div>
+        <h1>BOLLYWOOD HITSTER</h1>
+        <p class="subtitle">300 Verified Spotify Hits • 1950s–2020s</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button id="btn-host-tips" class="icon-pill" title="Party Host Setup & DND Checklist">
+        <span>🔕</span> <span class="hide-xs">Host Setup</span>
+      </button>
+      <a href="print.html" class="icon-pill" title="Printable Cards & Stickers">
+        <span>🖨️</span> <span class="hide-xs">Print Cards</span>
+      </a>
+    </div>
+  </header>
+
+  <!-- Dismissible Party Host Setup Banner (DND + Screen Wake Lock + Bluetooth) -->
+  <div id="host-banner" class="host-banner">
+    <div class="host-banner-content">
+      <div class="host-banner-title">
+        <span>📱 Party Phone Checklist (Before Handing Out Phone)</span>
+        <button id="btn-close-banner" class="banner-close" aria-label="Dismiss">✕</button>
+      </div>
+      <div class="host-steps">
+        <span class="step-badge">1. Turn on <strong>Do Not Disturb</strong> (hides notifications)</span>
+        <span class="step-badge">2. Connect <strong>Bluetooth Speaker</strong></span>
+        <span class="step-badge" id="wakelock-status">3. Screen Keep-Awake: <strong>Active</strong></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mode Navigation Tabs -->
+  <nav class="mode-tabs" role="tablist">
+    <button class="mode-tab active" data-mode="cards" role="tab">
+      <span class="tab-icon">📷</span>
+      <div>
+        <div class="tab-label">Physical Cards</div>
+        <div class="tab-sub">Scan QR or Type #</div>
+      </div>
+    </button>
+    <button class="mode-tab" data-mode="nocard" role="tab">
+      <span class="tab-icon">🎲</span>
+      <div>
+        <div class="tab-label">No-Card Mode</div>
+        <div class="tab-sub">Digital Deal &amp; Timeline</div>
+      </div>
+    </button>
+    <button class="mode-tab" data-mode="rules" role="tab">
+      <span class="tab-icon">🏆</span>
+      <div>
+        <div class="tab-label">Rules &amp; Score</div>
+        <div class="tab-sub">Year Window &amp; Teams</div>
+      </div>
+    </button>
+  </nav>
+
+  <main class="app-main">
+    <!-- ==================== MODE 1: PHYSICAL CARDS (QR SCAN + KEYPAD) ==================== -->
+    <section id="view-cards" class="view-section active">
+      <!-- Scanner / Input Card -->
+      <div class="glass-card scanner-card" id="scanner-panel">
+        <div class="section-head">
+          <div>
+            <h2>Scan Physical Card QR</h2>
+            <p class="muted">Non-guessing team scans the QR code (or types the Card # below)</p>
+          </div>
+          <div class="deck-Quick-badge">Decks A &amp; B (300)</div>
+        </div>
+
+        <!-- Camera Viewport -->
+        <div id="camera-container" class="camera-container hidden">
+          <video id="qr-video" playsinline muted></video>
+          <canvas id="qr-canvas" class="hidden"></canvas>
+          <div class="scan-reticle">
+            <div class="reticle-box"></div>
+            <p>Point at Card QR Code</p>
+          </div>
+          <button id="btn-stop-camera" class="btn btn-secondary btn-sm camera-close-btn">✕ Close Camera</button>
+        </div>
+
+        <div class="scanner-controls" id="scanner-buttons">
+          <button id="btn-start-camera" class="btn btn-primary btn-xl">
+            <span class="btn-icon">📷</span> Scan Card QR with Camera
+          </button>
+        </div>
+
+        <!-- Quick Card Number Keypad / Input -->
+        <div class="code-lookup-bar">
+          <div class="deck-toggle" role="group" aria-label="Select Deck">
+            <button type="button" class="deck-btn active" data-deck="A">DECK A</button>
+            <button type="button" class="deck-btn" data-deck="B">DECK B</button>
+          </div>
+          <input
+            type="text"
+            id="card-num-input"
+            class="card-num-input"
+            placeholder="Card # (001–150)"
+            inputmode="numeric"
+            maxlength="4"
+            autocomplete="off"
+          />
+          <button id="btn-play-code" class="btn btn-accent">▶ Play</button>
+        </div>
+
+        <!-- Quick Keypad Numbers -->
+        <div class="mini-keypad">
+          <button class="key-btn" data-key="1">1</button>
+          <button class="key-btn" data-key="2">2</button>
+          <button class="key-btn" data-key="3">3</button>
+          <button class="key-btn" data-key="4">4</button>
+          <button class="key-btn" data-key="5">5</button>
+          <button class="key-btn" data-key="6">6</button>
+          <button class="key-btn" data-key="7">7</button>
+          <button class="key-btn" data-key="8">8</button>
+          <button class="key-btn" data-key="9">9</button>
+          <button class="key-btn key-clear" data-key="C">CLR</button>
+          <button class="key-btn" data-key="0">0</button>
+          <button class="key-btn key-go" data-key="GO">GO ▶</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== MODE 2: NO-CARD MODE (DIGITAL DECK & TIMELINE) ==================== -->
+    <section id="view-nocard" class="view-section">
+      <div class="glass-card nocard-card">
+        <div class="section-head">
+          <div>
+            <h2>🎲 No-Card Mode (Spontaneous Play)</h2>
+            <p class="muted">Play right now without physical cards — draw mystery Bollywood hits or run a full digital timeline!</p>
+          </div>
+        </div>
+
+        <!-- Sub-mode selector -->
+        <div class="submode-bar">
+          <div class="filter-group">
+            <label for="nocard-deck-select">Deck Pool:</label>
+            <select id="nocard-deck-select" class="select-pill">
+              <option value="ALL">All 300 Songs (Decks A + B)</option>
+              <option value="A">Deck A Only (150 Songs)</option>
+              <option value="B">Deck B Only (150 Songs)</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <span id="nocard-remaining" class="badge-pill">300 unplayed</span>
+            <button id="btn-reset-nocard" class="btn-text">Reset Pool</button>
+          </div>
+        </div>
+
+        <div class="nocard-cta-row">
+          <button id="btn-draw-random" class="btn btn-primary btn-xl">
+            <span class="btn-icon">🎲</span> Draw Mystery Song &amp; Play Sample
+          </button>
+        </div>
+
+        <!-- Digital Timeline Builder for Teams -->
+        <div class="digital-timeline-box">
+          <div class="timeline-header">
+            <div>
+              <h3>📊 Interactive Team Timelines (Optional)</h3>
+              <p class="muted-sm">Tap a slot in the active team's timeline to place the current mystery card &amp; check the Year Window automatically!</p>
+            </div>
+            <div class="team-turn-switch">
+              <button class="turn-btn active" data-team="0" id="turn-team-0">Team A's Turn</button>
+              <button class="turn-btn" data-team="1" id="turn-team-1">Team B's Turn</button>
+            </div>
+          </div>
+
+          <div id="digital-timeline-slots" class="timeline-slots-container">
+            <!-- Populated dynamically by app.js -->
+          </div>
+
+          <div class="timeline-actions">
+            <button id="btn-deal-starters" class="btn btn-secondary btn-sm">🃏 Deal Starting Timeline Cards</button>
+            <button id="btn-add-to-timeline" class="btn btn-accent btn-sm" disabled>✅ Lock In &amp; Check Placement</button>
+          </div>
+          <div id="timeline-feedback" class="timeline-feedback hidden"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== ACTIVE SONG PLAYER PANEL (SHARED BY PHYSICAL & NO-CARD MODES) ==================== -->
+    <section id="player-panel" class="glass-card player-card hidden">
+      <div class="player-top-bar">
+        <div class="card-id-pill" id="player-card-badge">DECK A • #001</div>
+        <div class="view-mode-switch">
+          <button id="btn-toggle-blind" class="pill-toggle" title="Toggle whether song info is hidden or visible by default">
+            🙈 Blind Screen (Tap to Reveal)
+          </button>
+        </div>
+      </div>
+
+      <!-- Spinning Bollywood Vinyl & Progress Ring -->
+      <div class="vinyl-stage">
+        <div class="vinyl-disc" id="vinyl-disc">
+          <div class="vinyl-grooves"></div>
+          <div class="vinyl-center" id="vinyl-center-label">
+            <span id="vinyl-center-text">?</span>
+          </div>
+        </div>
+        <div class="player-status-box">
+          <div class="status-label" id="player-status-text">Playing 30s Spotify Representative Sample...</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" id="audio-progress-fill"></div>
+          </div>
+          <div class="time-row">
+            <span id="audio-time-current">0:00</span>
+            <span class="sample-tag">🎵 Official Spotify 30s Hook Sampler</span>
+            <span id="audio-time-total">0:30</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Primary Audio Controls -->
+      <div class="player-controls-row">
+        <button id="btn-play-pause" class="btn btn-primary btn-lg">⏸ Pause</button>
+        <button id="btn-replay" class="btn btn-secondary btn-lg">🔄 Replay Sample</button>
+        <button id="btn-next-scan" class="btn btn-accent btn-lg">📷 Next Card</button>
+      </div>
+
+      <!-- Qualification Rule Reminder -->
+      <div class="qualify-rule-banner">
+        <strong>🎯 To Qualify for the Year Window:</strong><br/>
+        • <strong>Film Song:</strong> Name <strong>Film + Song Title</strong> (Artist not required)<br/>
+        • <strong>No-Film Song:</strong> Say <strong>"No Film" + Artist + Song Title</strong>
+      </div>
+      <!-- Reveal / Answer Card (Hidden in Blind Mode until tapped, or visible in Host View) -->
+      <div class="answer-reveal-zone">
+        <button id="btn-reveal-answer" class="btn-reveal-card">
+          <span>👁 Tap to Reveal Card Answer (Year, Movie, Song &amp; Singers)</span>
+          <small>Physical card players can also pass around the back of the card!</small>
+        </button>
+
+        <div id="answer-card-face" class="physical-card-preview hidden">
+          <div class="pcard-inner" id="pcard-inner">
+            <div class="pcard-top-row">
+              <span class="pcard-id" id="ans-card-id">A-001</span>
+              <span class="pcard-decade" id="ans-decade">1990s</span>
+            </div>
+            <div class="pcard-year" id="ans-year">1998</div>
+            <div class="pcard-title" id="ans-title">Chaiyya Chaiyya</div>
+            <div class="pcard-movie" id="ans-movie">🎬 Dil Se..</div>
+            <div class="pcard-meta">
+              <div><strong>🎤 Singers:</strong> <span id="ans-singers">Sukhwinder Singh, Sapna Awasthi</span></div>
+              <div><strong>🎼 Music:</strong> <span id="ans-music">A.R. Rahman</span></div>
+              <div><strong>⭐ Stars:</strong> <span id="ans-stars">Shah Rukh Khan, Malaika Arora</span></div>
+            </div>
+            <div class="pcard-links">
+              <a id="ans-spotify-link" href="#" target="_blank" rel="noopener" class="spotify-mini-link">
+                Open Full Track in Spotify ↗
+              </a>
+            </div>
+          </div>
+
+          <!-- Quick Score Award Buttons after Reveal -->
+          <div class="quick-award-bar">
+            <span class="award-label">Award Turn:</span>
+            <button class="btn-award" data-award="team0-card">+1 Card Team A</button>
+            <button class="btn-award" data-award="team0-token">+1 Token Team A</button>
+            <button class="btn-award" data-award="team1-card">+1 Card Team B</button>
+            <button class="btn-award" data-award="team1-token">+1 Token Team B</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== MODE 3: RULES & SCOREBOARD ==================== -->
+    <section id="view-rules" class="view-section">
+      <!-- Live Scoreboard -->
+      <div class="glass-card scoreboard-card">
+        <div class="section-head">
+          <h2>🏆 Party Scoreboard</h2>
+          <button id="btn-reset-scores" class="btn-text">Reset Scores</button>
+        </div>
+        <div class="teams-grid">
+          <div class="team-box">
+            <input type="text" class="team-name-input" id="team0-name" value="Team A (Sholay)" />
+            <div class="score-counters">
+              <div class="counter-block">
+                <span class="counter-label">Timeline Cards (Goal: 10)</span>
+                <div class="counter-controls">
+                  <button class="cnt-btn" data-team="0" data-field="cards" data-delta="-1">−</button>
+                  <span class="cnt-val" id="team0-cards">1</span>
+                  <button class="cnt-btn" data-team="0" data-field="cards" data-delta="1">+</button>
+                </div>
+              </div>
+              <div class="counter-block">
+                <span class="counter-label">Hitster Tokens 🪙</span>
+                <div class="counter-controls">
+                  <button class="cnt-btn" data-team="0" data-field="tokens" data-delta="-1">−</button>
+                  <span class="cnt-val" id="team0-tokens">2</span>
+                  <button class="cnt-btn" data-team="0" data-field="tokens" data-delta="1">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="team-box">
+            <input type="text" class="team-name-input" id="team1-name" value="Team B (DDLJ)" />
+            <div class="score-counters">
+              <div class="counter-block">
+                <span class="counter-label">Timeline Cards (Goal: 10)</span>
+                <div class="counter-controls">
+                  <button class="cnt-btn" data-team="1" data-field="cards" data-delta="-1">−</button>
+                  <span class="cnt-val" id="team1-cards">1</span>
+                  <button class="cnt-btn" data-team="1" data-field="cards" data-delta="1">+</button>
+                </div>
+              </div>
+              <div class="counter-block">
+                <span class="counter-label">Hitster Tokens 🪙</span>
+                <div class="counter-controls">
+                  <button class="cnt-btn" data-team="1" data-field="tokens" data-delta="-1">−</button>
+                  <span class="cnt-val" id="team1-tokens">2</span>
+                  <button class="cnt-btn" data-team="1" data-field="tokens" data-delta="1">+</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Custom House Rules Card -->
+      <div class="glass-card rules-card">
+        <h2>🎲 How We Play Bollywood Hitster</h2>
+        <ol class="rules-list">
+          <li>
+            <strong>Setup:</strong> Split into two teams (or more). Deal each team <strong>1 face-up starting card</strong> to begin their timeline, plus <strong>2 Hitster Tokens 🪙</strong>.
+          </li>
+          <li>
+            <strong>Opposing Team Scans &amp; Passes the Card:</strong> On Team A's turn, <strong>Team B</strong> draws a card, scans the QR code on the iPhone, and can quietly pass the data side of the card around their own team while the 30-second Bollywood hook plays over Bluetooth!
+          </li>
+          <li>
+            <strong>Step 1 — Qualify (Film + Song, or "No Film" + Artist + Song):</strong>
+            <ul>
+              <li><strong>If it is a Film Song:</strong> The guessing team must name both the <strong>Film Name</strong> and the <strong>Song Title</strong> (naming the singer/artist gives no extra mileage on film songs).</li>
+              <li><strong>If it is a No-Film (Indipop) Song:</strong> The guessing team must say <strong>"No Film"</strong> plus the <strong>Artist Name</strong> and <strong>Song Title</strong>!</li>
+              <li>Getting Step 1 right <strong>qualifies</strong> the team to guess the proper <strong>Year Window</strong>!</li>
+            </ul>
+          </li>
+          <li>
+            <strong>Step 2 — Place in the Proper Year Window:</strong>
+            <ul>
+              <li>Once qualified, the team places the card into the proper chronological <strong>Year Window</strong> among the cards already in their timeline (before, between, or after existing cards; matching the exact year of an adjacent card is valid on either side).</li>
+            </ul>
+          </li>
+          <li>
+            <strong>Reveal &amp; Score:</strong>
+            <ul>
+              <li><strong>Correct Year Window:</strong> Keep the card face-up in your timeline!</li>
+              <li><strong>Bonus Token 🪙:</strong> Correctly naming the <strong>Movie / Song / Singer</strong> earns +1 Hitster Token.</li>
+              <li><strong>Steal ("Hitster!"):</strong> If the guessing team seems unsure, the opposing team can spend 1 Token to place their own bet on a different slot—if the guessing team is wrong and the steal slot is right, the opposing team steals the card!</li>
+            </ul>
+          </li>
+          <li>
+            <strong>Winning:</strong> First team to collect <strong>10 cards</strong> in their chronological timeline wins!
+          </li>
+        </ol>
+      </div>
+
+      <!-- Browse / Search All 300 Verified Songs (Spoiler-Protected) -->
+      <div class="glass-card catalog-browser-card">
+        <div class="section-head">
+          <div>
+            <h2>🔍 Song Catalog Inspector (300 Verified Tracks)</h2>
+            <p class="muted">Every card is verified against Spotify's official track ID &amp; 30s audio preview</p>
+          </div>
+          <button id="btn-toggle-catalog" class="btn btn-secondary btn-sm">Show Catalog</button>
+        </div>
+        <div id="catalog-drawer" class="catalog-drawer hidden">
+          <div class="catalog-filters">
+            <input type="search" id="catalog-search" class="card-num-input" placeholder="Search song, movie, singer, year, or card ID..." />
+            <select id="catalog-decade-filter" class="select-pill">
+              <option value="ALL">All Decades</option>
+              <option value="1950s">1950s</option>
+              <option value="1960s">1960s</option>
+              <option value="1970s">1970s</option>
+              <option value="1980s">1980s</option>
+              <option value="1990s">1990s</option>
+              <option value="2000s">2000s</option>
+              <option value="2010s">2010s</option>
+              <option value="2020s">2020s</option>
+            </select>
+          </div>
+          <div id="catalog-list" class="catalog-list"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Sticky Mini Score Footer -->
+  <footer class="mini-score-footer">
+    <div class="mini-team" id="footer-team0">
+      <span class="mini-name">Team A:</span>
+      <strong id="footer-t0-cards">1</strong> 🃏
+      <span class="mini-sep">•</span>
+      <strong id="footer-t0-tokens">2</strong> 🪙
+    </div>
+    <div class="mini-divider">|</div>
+    <div class="mini-team" id="footer-team1">
+      <span class="mini-name">Team B:</span>
+      <strong id="footer-t1-cards">1</strong> 🃏
+      <span class="mini-sep">•</span>
+      <strong id="footer-t1-tokens">2</strong> 🪙
+    </div>
+  </footer>
+
+  <!-- Hidden HTML5 Audio Element for Instant Zero-Switch Playback -->
+  <audio id="hitster-audio" preload="auto" crossorigin="anonymous"></audio>
+
+  <script src="app.js"></script>
+</body>
+</html>

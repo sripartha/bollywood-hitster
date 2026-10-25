@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bollywood Hitster — Print Studio (Cardstock &amp; Stickers)</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .print-studio-wrap {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 20px 16px 60px;
+    }
+    .pdf-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+    .pdf-card {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 209, 102, 0.3);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .pdf-card h3 {
+      color: var(--gold);
+      font-size: 1rem;
+    }
+    .pdf-card p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+    .pdf-meta {
+      font-size: 0.74rem;
+      color: var(--cyan);
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-disc"><span>🖨️</span></div>
+      <div>
+        <h1>PRINT STUDIO — CARDS &amp; STICKERS</h1>
+        <p class="subtitle">Ready-to-Print US Letter PDFs for Cardstock or Sticky Labels</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <a href="index.html" class="icon-pill">← Back to Game App</a>
+    </div>
+  </header>
+
+  <div class="print-studio-wrap">
+    <div class="glass-card">
+      <div class="section-head">
+        <div>
+          <h2>📄 Download Pre-Aligned Printable PDFs</h2>
+          <p class="muted">Print at <strong>100% / Actual Size</strong> on standard 8.5" × 11" US Letter paper</p>
+        </div>
+      </div>
+
+      <div class="pdf-grid">
+        <div class="pdf-card">
+          <div>
+            <div class="pdf-meta">OPTION 1A • 2-SIDED CARDSTOCK</div>
+            <h3>Deck A — Duplex Cardstock PDF</h3>
+            <p>150 Cards (A-001 to A-150). 12 square cards (2.5"×2.5") per sheet. Odd pages = Answer Fronts; Even pages = Horizontally Mirrored QR Backs for exact 2-sided alignment!</p>
+          </div>
+          <a href="pdfs/Deck-A-Cardstock-Duplex.pdf" download class="btn btn-primary btn-sm">⬇ Download Deck A Cardstock (26 pages)</a>
+        </div>
+
+        <div class="pdf-card">
+          <div>
+            <div class="pdf-meta">OPTION 1B • 2-SIDED CARDSTOCK</div>
+            <h3>Deck B — Duplex Cardstock PDF</h3>
+            <p>150 Cards (B-001 to B-150). Balanced across all decades (1950s–2020s) to match Deck A. Print 2-Sided (Flip on Long Edge).</p>
+          </div>
+          <a href="pdfs/Deck-B-Cardstock-Duplex.pdf" download class="btn btn-primary btn-sm">⬇ Download Deck B Cardstock (26 pages)</a>
+        </div>
+
+        <div class="pdf-card">
+          <div>
+            <div class="pdf-meta">OPTION 2A • PEEL &amp; STICK LABELS</div>
+            <h3>Deck A — Paired Sticker Sheets PDF</h3>
+            <p>150 Cards (A-001 to A-150). Each song has its <strong>[QR Sticker]</strong> and <strong>[Answer Sticker]</strong> side-by-side with matching IDs so you can stick them onto blank playing cards with zero mix-ups!</p>
+          </div>
+          <a href="pdfs/Deck-A-Stickers.pdf" download class="btn btn-accent btn-sm">⬇ Download Deck A Stickers (15 pages)</a>
+        </div>
+
+        <div class="pdf-card">
+          <div>
+            <div class="pdf-meta">OPTION 2B • PEEL &amp; STICK LABELS</div>
+            <h3>Deck B — Paired Sticker Sheets PDF</h3>
+            <p>150 Cards (B-001 to B-150). 10 paired songs (20 square 1.92" stickers) per sheet. Ideal for full-sheet sticker paper or label sheets.</p>
+          </div>
+          <a href="pdfs/Deck-B-Stickers.pdf" download class="btn btn-accent btn-sm">⬇ Download Deck B Stickers (15 pages)</a>
+        </div>
+
+        <div class="pdf-card">
+          <div>
+            <div class="pdf-meta">RULES &amp; MASTER CHECKLIST</div>
+            <h3>Official House Rules &amp; 300-Song Index</h3>
+            <p>1-Page Printable Table Rules (Film + Song vs. "No Film" + Artist + Song qualification + Year Window) plus the complete 300-song master reference table.</p>
+          </div>
+          <a href="pdfs/Bollywood-Hitster-Rules-and-Song-Index.pdf" download class="btn btn-secondary btn-sm">⬇ Download Rules &amp; Master Index PDF</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
