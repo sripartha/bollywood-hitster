@@ -1,4 +1,4 @@
-// Bollywood Hitster — Party Edition (iPhone Web App)
+// BollyGood — Bollywood Music Timeline Game (iPhone Web App)
 // Supports:
 // 1. Physical Cards Mode (In-App Camera QR Scanner + Card # Keypad + URL ?card=A001 deep link)
 // 2. No-Card Mode (Spontaneous Digital Mystery Draw + Interactive 2-Team Digital Timeline with Year Window check)
@@ -417,7 +417,7 @@ function loadAndPlayCard(card, autoPlay = true) {
   if (fill) fill.style.width = "0%";
 
   // Populate answer card DOM
-  document.getElementById("ans-card-id").textContent = card.card_label;
+  document.getElementById("ans-card-id").textContent = `#${card.card_label}`;
   document.getElementById("ans-decade").textContent = card.decade;
   document.getElementById("ans-year").textContent = card.year;
   document.getElementById("ans-title").textContent = card.title;
@@ -475,7 +475,7 @@ function setSpoilerFreeMediaSession() {
   if ("mediaSession" in navigator && state.currentCard) {
     navigator.mediaSession.metadata = new MediaMetadata({
       title: `Card #${state.currentCard.card_id}`,
-      artist: "Bollywood Hitster",
+      artist: "BollyGood",
       album: ""
     });
   }

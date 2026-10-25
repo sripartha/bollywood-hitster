@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Filmi Hitster" />
+  <meta name="apple-mobile-web-app-title" content="BollyGood" />
   <meta name="theme-color" content="#0d0814" />
-  <title>Bollywood Hitster — Party Edition</title>
+  <title>BollyGood</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="stylesheet" href="styles.css" />
   <!-- jsQR for universal iOS Safari camera QR scanning -->
@@ -16,7 +16,7 @@
 <body>
   <!-- Slim Single-Line Top Bar: Brand + 2-Way Radio Switch (Cards / No Cards) + Tiny Rules Link -->
   <header class="slim-topbar">
-    <span class="slim-brand">💿 Hitster</span>
+    <span class="slim-brand">💿 BollyGood</span>
 
     <div class="mode-radio-group" role="radiogroup" aria-label="Game Mode">
       <button type="button" class="mode-radio active mode-tab" data-mode="cards" role="radio" aria-checked="true">
@@ -169,8 +169,9 @@
       <div id="answer-card-face" class="physical-card-preview hidden">
         <div class="pcard-inner" id="pcard-inner">
           <div class="pcard-top-row">
-            <span class="pcard-id" id="ans-card-id">A-001</span>
-            <span class="pcard-decade" id="ans-decade">1990s</span>
+            <span class="pcard-brand">BOLLYGOOD</span>
+            <span class="pcard-id" id="ans-card-id">#A-001</span>
+            <span class="pcard-decade hidden" id="ans-decade">1990s</span>
           </div>
           <div class="pcard-year" id="ans-year">1998</div>
           <div class="pcard-title" id="ans-title">Chaiyya Chaiyya</div>
@@ -214,7 +215,7 @@
                 </div>
               </div>
               <div class="counter-block">
-                <span class="counter-label">Hitster Tokens 🪙</span>
+                <span class="counter-label">BollyGood Tokens 🪙</span>
                 <div class="counter-controls">
                   <button class="cnt-btn" data-team="0" data-field="tokens" data-delta="-1">−</button>
                   <span class="cnt-val" id="team0-tokens">2</span>
@@ -236,7 +237,7 @@
                 </div>
               </div>
               <div class="counter-block">
-                <span class="counter-label">Hitster Tokens 🪙</span>
+                <span class="counter-label">BollyGood Tokens 🪙</span>
                 <div class="counter-controls">
                   <button class="cnt-btn" data-team="1" data-field="tokens" data-delta="-1">−</button>
                   <span class="cnt-val" id="team1-tokens">2</span>
@@ -250,10 +251,10 @@
 
       <!-- Custom House Rules Card -->
       <div class="glass-card rules-card">
-        <h2>🎲 How We Play Bollywood Hitster</h2>
+        <h2>🎲 How We Play BollyGood</h2>
         <ol class="rules-list">
           <li>
-            <strong>Setup:</strong> Split into two teams (or more). Deal each team <strong>1 face-up starting card</strong> to begin their timeline, plus <strong>2 Hitster Tokens 🪙</strong>.
+            <strong>Setup:</strong> Split into two teams (or more). Deal each team <strong>1 face-up starting card</strong> to begin their timeline, plus <strong>2 BollyGood Tokens 🪙</strong>.
           </li>
           <li>
             <strong>Opposing Team Scans &amp; Passes the Card:</strong> On Team A's turn, <strong>Team B</strong> draws a card, scans the QR code on the iPhone, and can quietly pass the data side of the card around their own team while the Bollywood hook plays over Bluetooth!
@@ -276,8 +277,8 @@
             <strong>Reveal &amp; Score:</strong>
             <ul>
               <li><strong>Correct Year Window:</strong> Keep the card face-up in your timeline!</li>
-              <li><strong>Bonus Token 🪙:</strong> Correctly naming the <strong>Movie / Song / Singer</strong> earns +1 Hitster Token.</li>
-              <li><strong>Steal ("Hitster!"):</strong> If the guessing team seems unsure, the opposing team can spend 1 Token to place their own bet on a different slot—if the guessing team is wrong and the steal slot is right, the opposing team steals the card!</li>
+              <li><strong>Bonus Token 🪙:</strong> Correctly naming the <strong>Movie / Song / Singer</strong> earns +1 BollyGood Token.</li>
+              <li><strong>Steal ("BollyGood!"):</strong> If the guessing team seems unsure, the opposing team can spend 1 Token to place their own bet on a different slot—if the guessing team is wrong and the steal slot is right, the opposing team steals the card!</li>
             </ul>
           </li>
           <li>
