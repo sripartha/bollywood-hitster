@@ -1351,6 +1351,12 @@ body {
   text-decoration: underline;
 }
 
+.pcard-id {
+  font-size: 0.62rem !important;
+  font-weight: 400 !important;
+  color: #666666 !important;
+}
+
 </style>
   <!-- jsQR for universal iOS Safari camera QR scanning -->
   <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
@@ -1426,9 +1432,9 @@ body {
                 type="text"
                 id="card-num-input"
                 class="card-num-input"
-                placeholder="001–150"
+                placeholder="Code or #"
                 inputmode="numeric"
-                maxlength="4"
+                maxlength="8"
                 autocomplete="off"
               />
               <button id="btn-play-code" class="btn btn-accent">▶ Play</button>
@@ -1478,7 +1484,7 @@ body {
     <!-- ==================== SHARED ULTRA-SIMPLE SONG PLAYER (CARDS & NO-CARD) ==================== -->
     <section id="player-panel" class="glass-card player-card hidden">
       <div class="player-top-bar">
-        <div class="card-id-pill" id="player-card-badge">DECK A • #001</div>
+        <div class="card-id-pill" id="player-card-badge">A770017</div>
       </div>
 
       <!-- Clean Progress Bar -->
@@ -1511,7 +1517,7 @@ body {
       <div id="answer-card-face" class="physical-card-preview hidden">
         <div class="pcard-inner" id="pcard-inner">
           <div class="pcard-top-row">
-            <span class="pcard-brand">BOLLYGOOD</span>
+            
             <span class="pcard-id" id="ans-card-id">#A-001</span>
             <span class="pcard-decade hidden" id="ans-decade">1990s</span>
           </div>
@@ -1679,58 +1685,7 @@ body {
   <audio id="hitster-audio" preload="auto" crossorigin="anonymous"></audio>
 
   <script>
-// BollyGood — Bollywood Music Timeline Game (iPhone Web App)
-// Supports:
-// 1. Physical Cards Mode (In-App Camera QR Scanner + Card # Keypad + URL ?card=A001 deep link)
-// 2. No-Card Mode (Spontaneous Digital Mystery Draw + Interactive 2-Team Digital Timeline with Year Window check)
-// 3. Official House Rules:
-//    - Film Songs: Name Film + Song Title -> Qualifies to guess Year Window
-//    - No-Film (Indipop): Say "No Film" + Artist Name + Song Title -> Qualifies to guess Year Window
-// 4. Zero-spoiler iOS Lock Screen / Dynamic Island metadata + Screen Wake Lock + DND Host Checklist
-
-const state = {
-  catalog: [],
-  byId: {},
-  selectedDeck: "A",
-  currentCard: null,
-  blindMode: true, // Default: hide song details on screen until "Tap to Reveal" (since opposing team holds physical card)
-  isPlaying: false,
-  // No-Card Mode state
-  noCardPoolFilter: "ALL",
-  playedIds: new Set(JSON.parse(localStorage.getItem("bh_played_ids") || "[]")),
-  activeTeam: 0, // 0 = Team A, 1 = Team B
-  selectedSlotIndex: null,
-  timelines: JSON.parse(localStorage.getItem("bh_timelines") || "null") || [[], []],
-  // Scoreboard state
-  teams: JSON.parse(localStorage.getItem("bh_teams") || "null") || [
-    { name: "Team A (Sholay)", cards: 1, tokens: 2 },
-    { name: "Team B (DDLJ)", cards: 1, tokens: 2 }
-  ],
-  // Camera scanner state
-  cameraStream: null,
-  scanRaf: null,
-  wakeLock: null
-};
-
-const audioEl = document.getElementById("hitster-audio");
-
-// ==================== INITIALIZATION ====================
-document.addEventListener("DOMContentLoaded", async () => {
-  initTabs();
-  initHostBannerAndWakeLock();
-  initScoreboard();
-  initKeypadAndScanner();
-  initPlayerControls();
-  initNoCardMode();
-  initCatalogInspector();
-
-  await loadCatalog();
-  checkUrlForCardParam();
-});
-
-async function loadCatalog() {
-  try {
-    const data = [
+window.__INLINE_CATALOG__ = [
   {
     "year": 1987,
     "decade": "1980s",
@@ -10132,11 +10087,66 @@ async function loadCatalog() {
     "card_label": "B-150"
   }
 ];
+// BollyGood — Bollywood Music Timeline Game (iPhone Web App)
+// Supports:
+// 1. Physical Cards Mode (In-App Camera QR Scanner + Card # Keypad + URL ?card=A001 deep link)
+// 2. No-Card Mode (Spontaneous Digital Mystery Draw + Interactive 2-Team Digital Timeline with Year Window check)
+// 3. Official House Rules:
+//    - Film Songs: Name Film + Song Title -> Qualifies to guess Year Window
+//    - No-Film (Indipop): Say "No Film" + Artist Name + Song Title -> Qualifies to guess Year Window
+// 4. Zero-spoiler iOS Lock Screen / Dynamic Island metadata + Screen Wake Lock + DND Host Checklist
+
+const state = {
+  catalog: [],
+  byId: {},
+  selectedDeck: "A",
+  currentCard: null,
+  blindMode: true, // Default: hide song details on screen until "Tap to Reveal" (since opposing team holds physical card)
+  isPlaying: false,
+  // No-Card Mode state
+  noCardPoolFilter: "ALL",
+  playedIds: new Set(JSON.parse(localStorage.getItem("bh_played_ids") || "[]")),
+  activeTeam: 0, // 0 = Team A, 1 = Team B
+  selectedSlotIndex: null,
+  timelines: JSON.parse(localStorage.getItem("bh_timelines") || "null") || [[], []],
+  // Scoreboard state
+  teams: JSON.parse(localStorage.getItem("bh_teams") || "null") || [
+    { name: "Team A (Sholay)", cards: 1, tokens: 2 },
+    { name: "Team B (DDLJ)", cards: 1, tokens: 2 }
+  ],
+  // Camera scanner state
+  cameraStream: null,
+  scanRaf: null,
+  wakeLock: null
+};
+
+const audioEl = document.getElementById("hitster-audio");
+
+// ==================== INITIALIZATION ====================
+document.addEventListener("DOMContentLoaded", async () => {
+  initTabs();
+  initHostBannerAndWakeLock();
+  initScoreboard();
+  initKeypadAndScanner();
+  initPlayerControls();
+  initNoCardMode();
+  initCatalogInspector();
+
+  await loadCatalog();
+  checkUrlForCardParam();
+});
+
+async function loadCatalog() {
+  try {
+    const data = window.__INLINE_CATALOG__ || await (await fetch("catalog.json")).json();
     state.catalog = data;
     state.byId = {};
     data.forEach((item) => {
+      const disguised = `${item.deck}77${String(item.card_num).padStart(3, "0")}7`.toUpperCase();
+      item.disguised_code = disguised;
       state.byId[item.card_id.toUpperCase()] = item;
       state.byId[item.card_label.toUpperCase()] = item;
+      state.byId[disguised] = item;
     });
     updateNoCardRemainingBadge();
     if (state.timelines[0].length === 0 && state.timelines[1].length === 0) {
@@ -10284,7 +10294,13 @@ function initKeypadAndScanner() {
     const raw = input.value.trim().toUpperCase();
     if (!raw) return;
     let code = raw;
-    if (/^[AB]\d{1,3}$/.test(raw)) {
+    // Match disguised code like A770017 or 770017
+    const mDisguised = raw.match(/^([AB])?77(\d{1,3})7$/);
+    if (mDisguised) {
+      const d = mDisguised[1] || state.selectedDeck;
+      const n = parseInt(mDisguised[2], 10);
+      code = `${d}${String(n).padStart(3, "0")}`;
+    } else if (/^[AB]\d{1,3}$/.test(raw)) {
       const d = raw[0];
       const n = parseInt(raw.slice(1), 10);
       code = `${d}${String(n).padStart(3, "0")}`;
@@ -10316,7 +10332,7 @@ function initKeypadAndScanner() {
         input.value = "";
       } else if (k === "GO") {
         triggerInputLookup();
-      } else if (input.value.length < 3) {
+      } else if (input.value.length < 7) {
         input.value += k;
       }
     });
@@ -10493,7 +10509,8 @@ function loadAndPlayCard(card, autoPlay = true) {
   if (scannerPanel) scannerPanel.classList.add("hidden");
   if (nocardPanel) nocardPanel.classList.add("hidden");
 
-  document.getElementById("player-card-badge").textContent = `DECK ${card.deck} • #${String(card.card_num).padStart(3, "0")}`;
+  const dCode = card.disguised_code || `${card.deck}77${String(card.card_num).padStart(3, "0")}7`;
+  document.getElementById("player-card-badge").textContent = dCode;
   const fill = document.getElementById("audio-progress-fill");
   if (fill) fill.style.width = "0%";
 

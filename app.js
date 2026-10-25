@@ -54,8 +54,11 @@ async function loadCatalog() {
     state.catalog = data;
     state.byId = {};
     data.forEach((item) => {
+      const disguised = `${item.deck}77${String(item.card_num).padStart(3, "0")}7`.toUpperCase();
+      item.disguised_code = disguised;
       state.byId[item.card_id.toUpperCase()] = item;
       state.byId[item.card_label.toUpperCase()] = item;
+      state.byId[disguised] = item;
     });
     updateNoCardRemainingBadge();
     if (state.timelines[0].length === 0 && state.timelines[1].length === 0) {
@@ -203,7 +206,13 @@ function initKeypadAndScanner() {
     const raw = input.value.trim().toUpperCase();
     if (!raw) return;
     let code = raw;
-    if (/^[AB]\d{1,3}$/.test(raw)) {
+    // Match disguised code like A770017 or 770017
+    const mDisguised = raw.match(/^([AB])?77(\d{1,3})7$/);
+    if (mDisguised) {
+      const d = mDisguised[1] || state.selectedDeck;
+      const n = parseInt(mDisguised[2], 10);
+      code = `${d}${String(n).padStart(3, "0")}`;
+    } else if (/^[AB]\d{1,3}$/.test(raw)) {
       const d = raw[0];
       const n = parseInt(raw.slice(1), 10);
       code = `${d}${String(n).padStart(3, "0")}`;
@@ -235,7 +244,7 @@ function initKeypadAndScanner() {
         input.value = "";
       } else if (k === "GO") {
         triggerInputLookup();
-      } else if (input.value.length < 3) {
+      } else if (input.value.length < 7) {
         input.value += k;
       }
     });
@@ -412,7 +421,8 @@ function loadAndPlayCard(card, autoPlay = true) {
   if (scannerPanel) scannerPanel.classList.add("hidden");
   if (nocardPanel) nocardPanel.classList.add("hidden");
 
-  document.getElementById("player-card-badge").textContent = `DECK ${card.deck} • #${String(card.card_num).padStart(3, "0")}`;
+  const dCode = card.disguised_code || `${card.deck}77${String(card.card_num).padStart(3, "0")}7`;
+  document.getElementById("player-card-badge").textContent = dCode;
   const fill = document.getElementById("audio-progress-fill");
   if (fill) fill.style.width = "0%";
 
