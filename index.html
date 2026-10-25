@@ -34,7 +34,7 @@
   </header>
 
   <!-- Dismissible Party Host Setup Banner (DND + Screen Wake Lock + Bluetooth) -->
-  <div id="host-banner" class="host-banner">
+  <div id="host-banner" class="host-banner hidden">
     <div class="host-banner-content">
       <div class="host-banner-title">
         <span>📱 Party Phone Checklist (Before Handing Out Phone)</span>
@@ -74,67 +74,65 @@
   </nav>
 
   <main class="app-main">
-    <!-- ==================== MODE 1: PHYSICAL CARDS (QR SCAN + KEYPAD) ==================== -->
+    <!-- ==================== MODE 1: PHYSICAL CARDS (ULTRA-SIMPLE KIOSK) ==================== -->
     <section id="view-cards" class="view-section active">
-      <!-- Scanner / Input Card -->
-      <div class="glass-card scanner-card" id="scanner-panel">
-        <div class="section-head">
-          <div>
-            <h2>Scan Physical Card QR</h2>
-            <p class="muted">Non-guessing team scans the QR code (or types the Card # below)</p>
-          </div>
-          <div class="deck-Quick-badge">Decks A &amp; B (300)</div>
-        </div>
-
+      <div class="glass-card scanner-card simple-kiosk-card" id="scanner-panel">
         <!-- Camera Viewport -->
         <div id="camera-container" class="camera-container hidden">
           <video id="qr-video" playsinline muted></video>
           <canvas id="qr-canvas" class="hidden"></canvas>
           <div class="scan-reticle">
             <div class="reticle-box"></div>
-            <p>Point at Card QR Code</p>
+            <p>Hold Card QR in Box</p>
           </div>
-          <button id="btn-stop-camera" class="btn btn-secondary btn-sm camera-close-btn">✕ Close Camera</button>
+          <button id="btn-stop-camera" class="btn btn-secondary btn-sm camera-close-btn">✕ Close</button>
         </div>
 
         <div class="scanner-controls" id="scanner-buttons">
-          <button id="btn-start-camera" class="btn btn-primary btn-xl">
-            <span class="btn-icon">📷</span> Scan Card QR with Camera
+          <button id="btn-start-camera" class="btn btn-primary btn-jumbo">
+            <span class="jumbo-icon">📷</span>
+            <span>SCAN CARD</span>
           </button>
         </div>
 
-        <!-- Quick Card Number Keypad / Input -->
-        <div class="code-lookup-bar">
-          <div class="deck-toggle" role="group" aria-label="Select Deck">
-            <button type="button" class="deck-btn active" data-deck="A">DECK A</button>
-            <button type="button" class="deck-btn" data-deck="B">DECK B</button>
-          </div>
-          <input
-            type="text"
-            id="card-num-input"
-            class="card-num-input"
-            placeholder="Card # (001–150)"
-            inputmode="numeric"
-            maxlength="4"
-            autocomplete="off"
-          />
-          <button id="btn-play-code" class="btn btn-accent">▶ Play</button>
-        </div>
+        <div class="keypad-drawer-wrap">
+          <button id="btn-toggle-keypad" class="btn-text keypad-toggle-link" type="button">
+            ⌨️ Type Card # Instead
+          </button>
 
-        <!-- Quick Keypad Numbers -->
-        <div class="mini-keypad">
-          <button class="key-btn" data-key="1">1</button>
-          <button class="key-btn" data-key="2">2</button>
-          <button class="key-btn" data-key="3">3</button>
-          <button class="key-btn" data-key="4">4</button>
-          <button class="key-btn" data-key="5">5</button>
-          <button class="key-btn" data-key="6">6</button>
-          <button class="key-btn" data-key="7">7</button>
-          <button class="key-btn" data-key="8">8</button>
-          <button class="key-btn" data-key="9">9</button>
-          <button class="key-btn key-clear" data-key="C">CLR</button>
-          <button class="key-btn" data-key="0">0</button>
-          <button class="key-btn key-go" data-key="GO">GO ▶</button>
+          <div id="manual-keypad-drawer" class="manual-keypad-drawer hidden">
+            <div class="code-lookup-bar">
+              <div class="deck-toggle" role="group" aria-label="Select Deck">
+                <button type="button" class="deck-btn active" data-deck="A">DECK A</button>
+                <button type="button" class="deck-btn" data-deck="B">DECK B</button>
+              </div>
+              <input
+                type="text"
+                id="card-num-input"
+                class="card-num-input"
+                placeholder="001–150"
+                inputmode="numeric"
+                maxlength="4"
+                autocomplete="off"
+              />
+              <button id="btn-play-code" class="btn btn-accent">▶ Play</button>
+            </div>
+
+            <div class="mini-keypad">
+              <button class="key-btn" data-key="1">1</button>
+              <button class="key-btn" data-key="2">2</button>
+              <button class="key-btn" data-key="3">3</button>
+              <button class="key-btn" data-key="4">4</button>
+              <button class="key-btn" data-key="5">5</button>
+              <button class="key-btn" data-key="6">6</button>
+              <button class="key-btn" data-key="7">7</button>
+              <button class="key-btn" data-key="8">8</button>
+              <button class="key-btn" data-key="9">9</button>
+              <button class="key-btn key-clear" data-key="C">CLR</button>
+              <button class="key-btn" data-key="0">0</button>
+              <button class="key-btn key-go" data-key="GO">GO ▶</button>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -201,9 +199,9 @@
     <section id="player-panel" class="glass-card player-card hidden">
       <div class="player-top-bar">
         <div class="card-id-pill" id="player-card-badge">DECK A • #001</div>
-        <div class="view-mode-switch">
+        <div class="view-mode-switch nocard-only-ui">
           <button id="btn-toggle-blind" class="pill-toggle" title="Toggle whether song info is hidden or visible by default">
-            🙈 Blind Screen (Tap to Reveal)
+            🙈 Blind Screen
           </button>
         </div>
       </div>
@@ -237,7 +235,7 @@
       </div>
 
       <!-- Qualification Rule Reminder -->
-      <div class="qualify-rule-banner">
+      <div class="qualify-rule-banner nocard-only-ui">
         <strong>🎯 To Qualify for the Year Window:</strong><br/>
         • <strong>Film Song:</strong> Name <strong>Film + Song Title</strong> (Artist not required)<br/>
         • <strong>No-Film Song:</strong> Say <strong>"No Film" + Artist + Song Title</strong>
@@ -271,7 +269,7 @@
           </div>
 
           <!-- Quick Score Award Buttons after Reveal -->
-          <div class="quick-award-bar">
+          <div class="quick-award-bar nocard-only-ui">
             <span class="award-label">Award Turn:</span>
             <button class="btn-award" data-award="team0-card">+1 Card Team A</button>
             <button class="btn-award" data-award="team0-token">+1 Token Team A</button>

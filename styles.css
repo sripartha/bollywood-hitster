@@ -1006,3 +1006,56 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* ==================== ULTRA-SIMPLE CARD MODE KIOSK ==================== */
+.simple-kiosk-card {
+  text-align: center;
+  padding: 28px 20px;
+}
+
+.btn-jumbo {
+  width: 100%;
+  min-height: 150px;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 1.5rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  border-radius: 22px;
+  border: 2px solid var(--gold);
+  box-shadow: 0 12px 32px rgba(255, 42, 133, 0.45);
+}
+
+.jumbo-icon {
+  font-size: 3rem;
+  line-height: 1;
+}
+
+.keypad-drawer-wrap {
+  margin-top: 16px;
+}
+
+.keypad-toggle-link {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  padding: 6px 14px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.manual-keypad-drawer {
+  margin-top: 12px;
+}
+
+/* In Physical Card Mode (data-active-mode="cards"), hide extra UI clutter since players hold the physical cards */
+body[data-active-mode="cards"] .nocard-only-ui,
+body[data-active-mode="cards"] .answer-reveal-zone,
+body[data-active-mode="cards"] .mini-score-footer {
+  display: none !important;
+}
+
+body[data-active-mode="cards"] .player-controls-row .btn-lg {
+  padding: 18px 14px;
+  font-size: 1.05rem;
+}

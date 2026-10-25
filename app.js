@@ -82,18 +82,27 @@ function checkUrlForCardParam() {
 
 // ==================== TABS & NAVIGATION ====================
 function initTabs() {
+  document.body.setAttribute("data-active-mode", "cards");
   const tabs = document.querySelectorAll(".mode-tab");
   tabs.forEach((btn) => {
     btn.addEventListener("click", () => {
       const mode = btn.dataset.mode;
+      document.body.setAttribute("data-active-mode", mode);
       tabs.forEach((b) => b.classList.toggle("active", b === btn));
       document.querySelectorAll(".view-section").forEach((sec) => {
         sec.classList.toggle("active", sec.id === `view-${mode}`);
       });
-      // Hide player panel when viewing Rules tab so rules are unobstructed
       const playerPanel = document.getElementById("player-panel");
+      const scannerPanel = document.getElementById("scanner-panel");
       if (mode === "rules") {
         playerPanel.classList.add("hidden");
+      } else if (mode === "cards") {
+        if (state.currentCard) {
+          playerPanel.classList.remove("hidden");
+          if (scannerPanel) scannerPanel.classList.add("hidden");
+        } else {
+          if (scannerPanel) scannerPanel.classList.remove("hidden");
+        }
       } else if (state.currentCard) {
         playerPanel.classList.remove("hidden");
       }
@@ -196,6 +205,18 @@ function initKeypadAndScanner() {
       }
     });
   });
+
+  // Keypad drawer toggle
+  const btnToggleKeypad = document.getElementById("btn-toggle-keypad");
+  const keypadDrawer = document.getElementById("manual-keypad-drawer");
+  if (btnToggleKeypad && keypadDrawer) {
+    btnToggleKeypad.addEventListener("click", () => {
+      keypadDrawer.classList.toggle("hidden");
+      btnToggleKeypad.textContent = keypadDrawer.classList.contains("hidden")
+        ? "⌨️ Type Card # Instead"
+        : "✕ Hide Keypad";
+    });
+  }
 
   // Camera QR Scanner buttons
   document.getElementById("btn-start-camera").addEventListener("click", startCameraScanner);
@@ -307,6 +328,10 @@ function initPlayerControls() {
     if (activeTab === "nocard") {
       drawRandomMysteryCard();
     } else {
+      const scannerPanel = document.getElementById("scanner-panel");
+      const playerPanel = document.getElementById("player-panel");
+      if (scannerPanel) scannerPanel.classList.remove("hidden");
+      if (playerPanel) playerPanel.classList.add("hidden");
       window.scrollTo({ top: 0, behavior: "smooth" });
       startCameraScanner();
     }
@@ -388,6 +413,11 @@ function loadAndPlayCard(card, autoPlay = true) {
 
   const panel = document.getElementById("player-panel");
   panel.classList.remove("hidden");
+  const activeTab = document.querySelector(".mode-tab.active")?.dataset.mode;
+  if (activeTab === "cards") {
+    const scannerPanel = document.getElementById("scanner-panel");
+    if (scannerPanel) scannerPanel.classList.add("hidden");
+  }
 
   document.getElementById("player-card-badge").textContent = `DECK ${card.deck} • #${String(card.card_num).padStart(3, "0")}`;
 
